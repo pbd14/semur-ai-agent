@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package external_apps;
+
+option go_package = "semur-host-api/internal/models.pb/external_apps";
+
+message TelegramBotIntegration {
+    string id = 1;
+    string username = 2;
+    string user_id = 3;
+    string user_first_name = 4;
+    string user_last_name = 5;
+    TelegramBotIntegrationStatus integration_status = 6;
+    google.protobuf.Timestamp created_at = 7;
+}
+
+
+enum TelegramBotIntegrationStatus {
+    TELEGRAM_BOT_INACTIVE = 0;
+    TELEGRAM_BOT_ACTIVE = 1;
+    TELEGRAM_BOT_DELETED = 2;
+  }
+  

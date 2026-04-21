@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package external_apps;
+
+option go_package = "semur-host-api/internal/models.pb/external_apps";
+
+enum ExternalAppType {
+    TELEGRAM_BOT = 0;
+}
+
+enum ExternalAppIntegrationStatus {
+    INACTIVE = 0;
+    ACTIVE = 1;
+    DELETED = 2;
+}
+
+message ExternalAppIntegration {
+    string id = 1;
+    string user_id = 2;
+    ExternalAppType type = 3;
+    map<string, string> metadata = 4;
+    ExternalAppIntegrationStatus status = 5;
+    google.protobuf.Timestamp created_at = 6;
+    google.protobuf.Timestamp updated_at = 7;
+}

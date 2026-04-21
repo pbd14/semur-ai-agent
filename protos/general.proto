@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package general;
+
+message PhotoFirebase {
+    string photo = 1;
+    string photo_ref = 2;
+}

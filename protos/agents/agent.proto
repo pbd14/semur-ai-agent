@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package agents;
+
+import "semur-engine/semur_engine.proto";
+
+enum AgentCategory {
+    GENERAL = 0;
+    EMAIL = 1;
+    CALENDAR = 2;
+}
+
+enum AgentTool {
+    // SEMUR
+    SEMUR_CHAT_MENTION_EMAIL = 0;
+
+    // GOOGLE MAIL
+    GOOGLE_MAIL_GET_EMAILS = 10;
+    GOOGLE_MAIL_GET_EMAIL_BY_ID = 11;
+    GOOGLE_MAIL_SEARCH_COMMON_FILTERS = 12;
+    GOOGLE_MAIL_VECTOR_SEARCH = 13;
+    GOOGLE_MAIL_GET_SYNC_INFORMATION = 14;
+    GOOGLE_MAIL_SYNC = 15;
+    GOOGLE_MAIL_SEND_EMAIL = 16;
+
+    // GOOGLE CALENDAR
+    GOOGLE_CALENDAR_GET_EVENTS = 20;
+    GOOGLE_CALENDAR_SEARCH_COMMON_FILTERS = 21;
+    GOOGLE_CALENDAR_VECTOR_SEARCH = 22;
+    GOOGLE_CALENDAR_GET_SYNC_INFORMATION = 23;
+    GOOGLE_CALENDAR_SYNC = 24;
+
+    // OUTLOOK MAIL
+    OUTLOOK_MAIL_GET_EMAILS = 30;
+    OUTLOOK_MAIL_GET_EMAIL_BY_ID = 31;
+    OUTLOOK_MAIL_SEARCH_COMMON_FILTERS = 32;
+    OUTLOOK_MAIL_VECTOR_SEARCH = 33;
+    OUTLOOK_MAIL_GET_SYNC_INFORMATION = 34;
+    OUTLOOK_MAIL_SYNC = 35;
+    OUTLOOK_MAIL_SEND_EMAIL = 36;
+}
+
+enum AgentMood {
+    NORMAL = 0;
+    DETERMINISTIC = 1;
+    CAREFUL = 2;
+    CREATIVE = 3;
+    WILD = 4;
+}
+
+message AgentChatInput {
+    string userId = 1;
+    string sessionId = 2;
+    repeated string connectionIds = 3;
+    string userMessage = 4;
+    bool fastMode = 5;
+    bool proMode = 6;
+    optional AgentMood agentMood = 7;
+}
+
+message AgentChatOutput {
+    semur_engine.SemurEngineErrorCode error = 1;
+    string message = 2;
+    optional string chatOutput = 3;
+}

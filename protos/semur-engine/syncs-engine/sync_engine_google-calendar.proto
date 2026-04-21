@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package syncs_engine;
+
+import "semur-engine/semur_engine.proto";
+import "semur-engine/syncs-engine/sync_engine.proto";
+
+message SyncGoogleCalendarEventsRequest {
+    string user_id = 1;
+    string integration_id = 2;
+}
+
+message SyncGoogleCalendarEventsFromNangoToFirestoreRequest {
+    string user_id = 1;
+    string integration_id = 2;
+    optional int32 limit = 3;
+    repeated syncs_engine.SyncFilter filter = 4;
+}
+
+message SyncGoogleCalendarEventsFromNangoToFirestoreResponse {
+    semur_engine.SemurEngineErrorCode error = 1;
+    string message = 2;
+}

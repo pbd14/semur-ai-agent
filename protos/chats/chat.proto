@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package chats;
+
+import "agents/agent.proto";
+import "agents/email_assistant.proto";
+import "google/protobuf/timestamp.proto";
+
+enum ChatRole {
+    USER = 0;
+    MODEL = 1;
+    SYSTEM = 2;
+    TOOL = 3;
+}
+
+message ChatMessage {
+    int32 id = 1;
+    ChatRole role = 2;
+    string author = 3;
+    string content = 4;
+    repeated string follow_up_questions = 5;
+    // Metadata about the message
+    optional ChatMetadata metadata = 6;
+    optional ChatArtifacts artifacts = 7;
+    optional string output = 8;
+    // Tool-specific metadata
+    optional string toolName = 9;
+    optional string toolRequestJson = 10;
+    optional string toolResponseJson = 11;
+    google.protobuf.Timestamp created_at = 12;
+}
+
+message ChatMetadata {
+    agents.EmailAssistantChatMetadata email_assistant = 1;
+}
+
+message ChatArtifacts {
+    agents.EmailAssistantChatArtifacts email_assistant = 1;
+}
+
+
+message ChatSession {
+    string id = 1;
+    string user_id = 2;
+    agents.AgentCategory agent_category = 3;
+    int32 current_message_index = 4;
+    google.protobuf.Timestamp created_at = 5;
+    string title = 6;
+}

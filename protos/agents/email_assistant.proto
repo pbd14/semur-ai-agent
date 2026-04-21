@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+package agents;
+
+
+// export const MentionedEmail = z.object({
+//     provider: z.enum(["gmail", "outlook", "custom"]).describe("The email service provider."),
+//     messageId: z.string().describe("Message id from given provider"), // Gmail: message.id; Outlook: message.id
+//     threadKey: z.string().describe("Thread id from given provider"), // Gmail: threadId;  Outlook: conversationId
+//     subject: z.string().default(""),
+//     senderName: z.string().default(""),
+//     senderEmail: z.string().default(""),
+//     snippet: z.string().optional().describe("A short snippet or preview of the email content."),
+//     date: z.string().optional(), // ISO string
+//     importanceScore: z.number().min(0).max(1).default(0.5),
+//     labels: z.array(z.string()).default([]),
+// });
+
+message EmailAssistantMentionedEmail {
+    // TODO: This has limited options
+    string id = 1;
+    string nangoIntegrationId = 2;
+    string provider = 3;
+    string subject = 4;
+    string senderName = 5;
+    string senderEmail = 6;
+    string snippet = 7;
+    string date = 8;
+    float importanceScore = 9;
+}
+
+message EmailAssistantSuggestedReply {
+    string replyText = 1;
+    string replySubject = 2;
+}
+
+// export const ChatOutput = z.object({
+//     replyText: z.string(),
+//     artifacts: z.object({
+//         mentionedEmails: z.array(MentionedEmail).default([]),
+//     }),
+//     metadata: z.object({
+//         totalEmailsAnalyzed: z.number().optional(),
+//         timeRange: z.string().optional(),
+//         searchQuery: z.string().optional(),
+//     }),
+// });
+
+message EmailAssistantChatOutput {
+    string replyText = 1;
+    EmailAssistantChatArtifacts artifacts = 2;
+    EmailAssistantChatMetadata metadata = 3;
+}
+
+message EmailAssistantChatArtifacts {
+    repeated EmailAssistantMentionedEmail mentionedEmails = 1;
+}
+
+message EmailAssistantChatMetadata {
+    int32 totalEmailsAnalyzed = 1;
+    string timeRange = 2;
+}
+
+message EmailAssistantGenerateResponseEmailInput {
+    string from = 1;
+    string to = 2;
+    string date = 3;
+    string subject = 4;
+    string body = 5;
+}
+
+message EmailAssistantGenerateResponseEmailOutput {
+    string responseEmailSubject = 1;
+    string responseEmailBody = 2;
+}

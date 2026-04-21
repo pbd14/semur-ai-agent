@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package notifications;
+
+message  NotificationApp {
+  string id = 1;
+  string user_id = 2;
+  map<string, string> title = 3;
+  map<string, string> description = 4;
+  NotificationStatus status = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp death_at = 7;
+}
+
+enum NotificationStatus {
+    UNREAD = 0;
+    READ = 1;
+}

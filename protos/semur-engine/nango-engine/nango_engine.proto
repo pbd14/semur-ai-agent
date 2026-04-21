@@ -1,0 +1,107 @@
+syntax = "proto3";
+
+package semur_engine;
+
+import "semur-engine/semur_engine.proto";
+import "nango/nango.proto";
+import "google/protobuf/timestamp.proto";
+import "syncs/sync.proto";
+
+// User Connections
+message NangoUserConnectionsRequest {
+    string user_id = 1;
+    optional string organization_id = 2;
+}
+
+message NangoUserConnectionsResponse {
+    semur_engine.SemurEngineErrorCode error = 1;
+    string message = 2;
+    repeated nango.NangoConnectionPublic connections = 3;
+}
+
+// Session Token
+message NangoSessionTokenRequest {
+    string integration_id = 1;
+    string user_id = 2;
+    optional string user_email = 3;
+    optional string user_name = 4;
+}
+
+message NangoSessionTokenResponse {
+    semur_engine.SemurEngineErrorCode error = 1;
+    string message = 2;
+    string token = 3;
+}
+
+// Webhook
+message NangoConnectionWebhookEndUser {
+    string endUserId = 1;
+    optional string organizationId = 2;
+}
+
+message NangoConnectionWebhookError {
+    string type = 1;
+    string message = 2;
+}
+
+message NangoConnectionWebhookRequest {
+    string type = 1;
+    string operation = 2;
+    string connection_id = 3;
+    string auth_mode = 4;
+    string provider_config_key = 5;
+    string provider = 6;
+    string environment = 7;
+    bool success = 8;
+    optional NangoConnectionWebhookEndUser end_user = 9;
+    optional NangoConnectionWebhookError error = 10;
+}
+
+// {
+//     "type": "sync",
+//     "connectionId": "<your-connection-id>",
+//     "providerConfigKey": "<your-integration-id>",
+//     "syncName": "<your-sync-script-name>",
+//     "model": "<your-model-name>",
+//     "syncType": "INCREMENTAL | INITIAL | WEBHOOK",
+//     "success": true,
+//     "modifiedAfter": "<timestamp>",
+//     "responseResults": {
+//         "added": number,
+//         "updated": number,
+//         "deleted": number
+//     }
+// }
+
+message NangoSyncWebhookRequest {
+    string type = 1;
+    string connection_id = 2;
+    string provider_config_key = 3;
+    string sync_name = 4;
+    string model = 5;
+    string sync_type = 6;
+    bool success = 7;
+    google.protobuf.Timestamp modified_after = 8;
+    NangoSyncWebhookResponseResults response_results = 9;
+}
+
+message NangoSyncWebhookResponseResults {
+    int32 added = 1;
+    int32 updated = 2;
+    int32 deleted = 3;
+}
+
+// Trigger sync
+
+message NangoTriggerSyncRequest {
+    string provider_config_key = 1;
+    repeated string syncs = 2;
+    string connection_id = 3;
+    syncs.SyncMode sync_mode = 4;
+    string user_id = 5;
+}
+
+message NangoTriggerSyncResponse {
+    semur_engine.SemurEngineErrorCode error = 1;
+    string message = 2;
+}

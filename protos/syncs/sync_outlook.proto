@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package syncs;
+
+import "google/protobuf/timestamp.proto";
+import "syncs/sync.proto";
+
+// {
+//     "id": "<string>"
+//     "sender"?: "<string>"
+//     "recipients"?: "<string>"
+//     "date": "<string>"
+//     "subject": "<string>"
+//     "body": "<string>"
+//     "attachments": "<{ "filename": "<string>", "mimeType": "<string>", "size": "<number>", "attachmentId": "<string>" }[]>"
+//     "threadId": "<string>"
+//     "_nango_metadata": {
+//       "deleted_at": "date | null",
+//       "last_action": "ADDED | UPDATED | DELETED",
+//       "first_seen_at": "date",
+//       "cursor": "string",
+//       "last_modified_at": "date"
+//     }
+//   }
+
+message SyncOutlookEmail {
+    string id = 1;
+    string sender = 2;
+    string recipients = 3;
+    google.protobuf.Timestamp date = 4;
+    string subject = 5;
+    string body = 6;
+    string full_content = 7;
+    repeated SyncOutlookEmailAttachment attachments = 8;
+    string threadId = 9;
+    syncs.SyncNangoMetadata nango_metadata = 10;
+}
+
+message SyncOutlookEmailAttachment {
+    string filename = 1;
+    string mimeType = 2;
+    int32 size = 3;
+    string attachmentId = 4;
+}

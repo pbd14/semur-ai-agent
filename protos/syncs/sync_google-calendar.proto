@@ -1,0 +1,111 @@
+syntax = "proto3";
+
+package syncs;
+
+import "google/protobuf/timestamp.proto";
+import "syncs/sync.proto";
+
+/*
+{
+      "kind": "<string>"
+      "etag": "<string>"
+      "id": "<string>"
+      "status": "<string>"
+      "htmlLink": "<string>"
+      "created": "<string>"
+      "updated": "<string>"
+      "summary": "<string>"
+      "description"?: "<string>"
+      "location"?: "<string>"
+      "colorId"?: "<string>"
+      "creator"?: { "id"?: "<string>", "email"?: "<string>", "displayName"?: "<string>", "self"?: "<boolean>" }
+      "organizer"?: { "id"?: "<string>", "email"?: "<string>", "displayName"?: "<string>", "self"?: "<boolean>" }
+      "start": { "date"?: "<string>", "dateTime"?: "<string>", "timeZone"?: "<string>" }
+      "end": { "date"?: "<string>", "dateTime"?: "<string>", "timeZone"?: "<string>" }
+      "endTimeUnspecified"?: "<boolean>"
+      "recurrence"?: "<string[]>"
+      "recurringEventId"?: "<string>"
+      "originalStartTime"?: { "date"?: "<string>", "dateTime"?: "<string>", "timeZone"?: "<string>" }
+      "transparency"?: "<string>"
+      "visibility"?: "<string>"
+      "iCalUID"?: "<string>"
+      "sequence"?: "<number>"
+      "attendees"?: "<{ "id"?: "<string>", "email"?: "<string>", "displayName"?: "<string>", "organizer"?: "<boolean>", "self"?: "<boolean>", "resource"?: "<boolean>", "optional"?: "<boolean>", "responseStatus"?: "<string>", "comment"?: "<string>", "additionalGuests"?: "<number>" }[]>"
+      "attendeesOmitted"?: "<boolean>"
+      "extendedProperties"?: { "private"?: {  }, "shared"?: {  } }
+      "hangoutLink"?: "<string>"
+      "conferenceData"?: { "createRequest"?: { "requestId": "<string>", "conferenceSolutionKey": { "type": "<string>" }, "status": { "statusCode": "<string>" } }, "entryPoints"?: "<{ "entryPointType": "<string>", "uri"?: "<string>", "label"?: "<string>", "pin"?: "<string>", "accessCode"?: "<string>", "meetingCode"?: "<string>", "passcode"?: "<string>", "password"?: "<string>", "regionCode"?: "<string>" }[]>", "conferenceSolution"?: { "key": { "type": "<string>" }, "name": "<string>", "iconUri": "<string>" }, "conferenceId"?: "<string>", "signature"?: "<string>", "notes"?: "<string>", "parameters"?: { "addOnParameters"?: { "parameters"?: {  } } } }
+      "gadget"?: { "type"?: "<string>", "title"?: "<string>", "link"?: "<string>", "iconLink"?: "<string>", "width"?: "<number>", "height"?: "<number>", "display"?: "<string>", "preferences"?: {  } }
+      "anyoneCanAddSelf"?: "<boolean>"
+      "guestsCanInviteOthers"?: "<boolean>"
+      "guestsCanModify"?: "<boolean>"
+      "guestsCanSeeOtherGuests"?: "<boolean>"
+      "privateCopy"?: "<boolean>"
+      "locked"?: "<boolean>"
+      "reminders"?: { "useDefault": "<boolean>", "overrides"?: "<{ "method": "<string>", "minutes": "<number>" }[]>" }
+      "outOfOfficeProperties"?: { "autoDeclineMode"?: "<string>", "declineMessage"?: "<string>" }
+      "source"?: { "url"?: "<string>", "title"?: "<string>" }
+      "workingLocationProperties"?: { "type": "<string>", "homeOffice"?: "<any>", "customLocation"?: { "label"?: "<string>" }, "officeLocation"?: { "buildingId"?: "<string>", "floorId"?: "<string>", "floorSectionId"?: "<string>", "deskId"?: "<string>", "label"?: "<string>" } }
+      "attachments"?: "<{ "fileUrl": "<string>", "title"?: "<string>", "mimeType"?: "<string>", "iconLink"?: "<string>", "fileId"?: "<string>" }[]>"
+      "eventType"?: "<string>"
+      "_nango_metadata": {
+        "deleted_at": "date | null",
+        "last_action": "ADDED | UPDATED | DELETED",
+        "first_seen_at": "date",
+        "cursor": "string",
+        "last_modified_at": "date"
+      }
+    }
+*/
+
+message SyncGoogleCalendarEvent {
+    string id = 1;
+    string kind = 2;
+    string etag = 3;
+    string status = 4;
+    string htmlLink = 5;
+    google.protobuf.Timestamp created = 6;
+    google.protobuf.Timestamp updated = 7;
+    string summary = 8;
+    string description = 9;
+    string fullContent = 10;
+    optional string location = 11;
+    optional SyncGoogleCalendarEventCreator creator = 12;
+    optional SyncGoogleCalendarEventOrganizer organizer = 13;
+    google.protobuf.Timestamp start = 14;
+    google.protobuf.Timestamp end = 15;
+    optional bool endTimeUnspecified = 16;
+    repeated string recurrence = 17;
+    optional string recurringEventId = 18;
+    repeated SyncGoogleCalendarEventAttendee attendees = 19;
+    optional bool attendeesOmitted = 20;
+    optional string hangoutLink = 21;
+    syncs.SyncNangoMetadata nango_metadata = 22;
+}
+
+message SyncGoogleCalendarEventCreator {
+    optional string id = 1;
+    optional string email = 2;
+    optional string displayName = 3;
+    optional bool self = 4;
+}
+
+message SyncGoogleCalendarEventOrganizer {
+    optional string id = 1;
+    optional string email = 2;
+    optional string displayName = 3;
+    optional bool self = 4;
+}
+
+message SyncGoogleCalendarEventAttendee {
+    optional string id = 1;
+    optional string email = 2;
+    optional string displayName = 3;
+    optional bool organizer = 4;
+    optional bool self = 5;
+    optional bool resource = 6;
+    optional bool optional = 7;
+    optional string responseStatus = 8;
+    optional string comment = 9;
+    optional int32 additionalGuests = 10;
+}

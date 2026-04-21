@@ -1,0 +1,54 @@
+# macOS / editor metadata
+.DS_Store
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Logs and local scratch
+*.log
+*.class
+*.pyc
+*.swp
+.atom/
+.buildlog/
+.history/
+.svn/
+migrate_working_dir/
+
+# Node / Firebase / Genkit
+**/node_modules/
+server/functions/lib/
+server/functions/.genkit/
+.genkit/
+demo/web/
+*.local
+.env.local
+.env.*.local
+
+# Flutter / Dart
+**/doc/api/
+**/.dart_tool/
+**/.packages
+**/build/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.pub-cache/
+**/.pub/
+**/ios/Flutter/.last_build_id
+**/android/app/debug/
+**/android/app/profile/
+**/android/app/release/
+
+# Flutter symbolication / obfuscation
+app.*.symbols
+app.*.map.json
+
+# Local Firebase hosting cache
+**/.firebase/
+
+# Sensitive local files
+gcp files/
+*oauth*.json
+*secret*.json

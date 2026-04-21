@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package nango;
+
+import "agents/agent.proto";
+import "google/protobuf/timestamp.proto";
+
+enum NangoIntegrationStatus {
+    INACTIVE = 0;
+    ACTIVE = 1;
+}
+
+message NangoIntegration {
+    string id = 1;
+    string name = 2;
+    NangoIntegrationStatus status = 3;
+    repeated agents.AgentCategory categories = 4;
+}
+
+enum NangoConnectionStatus {
+    NANGO_CONNECTION_INACTIVE = 0;
+    NANGO_CONNECTION_ACTIVE = 1;
+    NANGO_CONNECTION_CONNECTING = 2;
+}
+
+message NangoConnectionError {
+    string type = 1;
+    string message = 2;
+}
+
+message NangoConnection {
+    string id = 1; // Represents nango integration id
+    string user_id = 2;
+    string connection_id = 3;
+    optional string organization_id = 4;
+    NangoConnectionStatus status = 5;
+    optional string provider = 6;
+    optional string auth_mode = 7;
+    optional NangoConnectionError nango_error = 8;
+    google.protobuf.Timestamp updated_at = 9;
+}
+
+message NangoConnectionPublic {
+    string id = 1; // Represents nango integration id
+    string user_id = 2;
+    optional string organization_id = 3;
+    NangoConnectionStatus status = 4;
+    optional string provider = 5;
+    google.protobuf.Timestamp updated_at = 6;
+}

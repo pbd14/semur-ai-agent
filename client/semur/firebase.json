@@ -1,0 +1,29 @@
+{
+  "flutter": {
+    "platforms": {
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "semur-ai",
+          "configurations": {
+            "web": "1:592870587585:web:463088b434c44fd5d4a840"
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "site": "semur-ai",
+    "public": "build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}

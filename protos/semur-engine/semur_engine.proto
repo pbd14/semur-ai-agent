@@ -1,0 +1,35 @@
+// By Bekhruzjon Pulatov
+
+syntax = "proto3";
+
+package semur_engine;
+
+message SemurEngineResponse {
+    SemurEngineErrorCode error = 1;
+    string message = 2;
+}
+
+enum SemurEngineErrorCode {
+    NO_ERROR = 0;
+    CUSTOM_ERROR = 100;
+    NO_DATA_RECEIVED = 101;
+    INTERNAL_ERROR = 1;
+    BAD_REQUEST = 2;
+    UNAUTHORIZED = 3;
+    NOT_FOUND = 4;
+    METHOD_NOT_ALLOWED = 5;
+    CONFLICT = 6;
+    TOO_MANY_REQUESTS = 7;
+    UNAVAILABLE = 8;
+    PERMISSION_DENIED = 9;
+
+    // Nango
+    NANGO_ERROR = 10;
+    NANGO_SESSION_TOKEN_ERROR = 11;
+    NANGO_CONNECTION_ERROR = 12;
+
+    // Agents
+    AGENT_ERROR = 20;
+    AGENT_NO_INTEGRATION = 21;
+    AGENT_MODEL_ERROR = 22;
+}

@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package semur_engine;
+
+import "semur-engine/semur_engine.proto";
+
+// User Connections
+message NangoGoogleMailSendEmailRequest {
+    string userId = 1;
+    string to = 2;
+    map<string, string> headers = 3;
+    optional string subject = 4;
+    string body = 5;
+}
+
+message NangoGoogleMailSendEmailResponse {
+    semur_engine.SemurEngineErrorCode error = 1;
+    string message = 2;
+}

@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package syncs;
+
+import "google/protobuf/timestamp.proto";
+
+enum SyncMode {
+    INCREMENTAL = 0;
+    FULL_REFRESH = 1;
+    FULL_REFRESH_AND_CLEAR_CACHE = 2;
+}
+
+enum SyncStatus {
+    PENDING = 0;
+    IN_PROGRESS = 1;
+    COMPLETED = 2;
+    FAILED = 3;
+    PARTIALLY_COMPLETED = 4;
+}
+
+message SyncInformation{
+    string id = 1;
+    string nango_integration_id = 2;
+    google.protobuf.Timestamp updated_at = 3;
+    optional string nango_next_cursor = 4;
+    SyncStatus status = 5;
+    optional string error_message = 6;
+}
+
+message SyncNangoMetadata {
+    google.protobuf.Timestamp deleted_at = 1;
+    string last_action = 2;
+    google.protobuf.Timestamp first_seen_at = 3;
+    string cursor = 4;
+    google.protobuf.Timestamp last_modified_at = 5;
+}

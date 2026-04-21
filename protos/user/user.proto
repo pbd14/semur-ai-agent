@@ -1,0 +1,39 @@
+// By Bekhruzjon Pulatov
+
+syntax = "proto3";
+package users;
+import "google/protobuf/timestamp.proto";
+import "notifications/notification.proto";
+import "general.proto";
+
+message SemurUser {
+  string id = 1;
+  optional string email = 2;
+  string first_name = 3;
+  string last_name = 4;
+  google.protobuf.Timestamp birth_date = 5;
+  UserStatus status = 6;
+  repeated string fcm_android_tokens = 7;
+  repeated string fcm_ios_tokens = 8;
+  repeated string vapid_web_tokens = 9;
+  optional string language = 10;
+  optional string organization_id = 11;
+  general.PhotoFirebase photo = 12;
+}
+
+enum UserStatus {
+  CREATED = 0;
+  UNVERIFIED = 1;
+  VERIFIED = 2;
+  BLOCKED = 3;
+}
+
+message UserNotification {
+  string id = 1;
+  string user_id = 2;
+  map<string, string> title = 3;
+  map<string, string> description = 4;
+  notifications.NotificationStatus status = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp death_at = 7;
+}
