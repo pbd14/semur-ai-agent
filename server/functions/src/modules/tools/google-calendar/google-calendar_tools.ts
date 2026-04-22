@@ -241,7 +241,7 @@ export class GoogleCalendarTools {
                     collection: `users/${session.userId}/nango_connections/${nangoIntegrationId}/syncs`,
                     contentField: "fullContent", // Field containing document content
                     vectorField: "embedding", // Field containing vector embeddings
-                    embedder: googleAI.embedder("text-embedding-004", {outputDimensionality: 768}), // Embedder to generate embeddings
+                    embedder: googleAI.embedder("gemini-embedding-001", {outputDimensionality: 768}), // Embedder to generate embeddings
                     distanceMeasure: "COSINE", // Default is 'COSINE'; other options: 'EUCLIDEAN', 'DOT_PRODUCT'
                 });
                 const docs = await ai.retrieve({
