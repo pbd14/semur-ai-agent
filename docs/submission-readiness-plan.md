@@ -157,6 +157,14 @@ Expected outcome:
 - The demo can run locally with documented setup.
 - External secrets are optional for the course demo path.
 
+Implementation update on 2026-04-22:
+
+- Added deterministic backend demo fixtures and a no-secret `demoChat` callable under the email assistant module.
+- Added `npm run seed:demo` to seed emulator Auth/Firestore with a demo user, demo Gmail/Calendar connections, fixture emails, fixture calendar events, and app data.
+- Added a standalone Flutter `/demo` route that calls the demo endpoint and renders the existing "Agent Collaboration" trace without sign-in or integration selection.
+- Added `--dart-define=USE_FIREBASE_EMULATORS=true` client support for local Auth, Firestore, and Functions emulators.
+- Updated the root README and runtime config docs with the fresh-clone demo commands and expected visible result.
+
 ### 4. Fix Test And Analysis Gates
 
 Goal: avoid submitting a project with visibly broken quality checks.

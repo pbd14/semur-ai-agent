@@ -1,4 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -36,6 +38,20 @@ Future<void> main() async {
   // This will make splash appear longer
   // FlutterNativeSplash.preserve(widgetsBinding: binding);
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  if (Config.useFirebaseEmulators) {
+    FirebaseFirestore.instance.useFirestoreEmulator(
+      Config.firebaseEmulatorHost,
+      8080,
+    );
+    FirebaseFunctions.instance.useFunctionsEmulator(
+      Config.firebaseEmulatorHost,
+      5001,
+    );
+    await FirebaseAuth.instance.useAuthEmulator(
+      Config.firebaseEmulatorHost,
+      9099,
+    );
+  }
 
   // App Check
   // if (!kDebugMode) {

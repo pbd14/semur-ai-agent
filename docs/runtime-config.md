@@ -6,6 +6,10 @@ This document lists the runtime configuration needed to run Semur locally or in 
 
 Firebase Functions reads secrets through `server/functions/src/runtime/runtime_config.ts`.
 
+The reproducible local demo path does not require backend secrets. It uses the
+no-secret `agent_email_assistant[-dev]-demoChat` callable and deterministic
+fixtures under `server/functions/src/modules/agents/email_assistant/demo/`.
+
 ### Required
 
 - `NANGO_SECRET_KEY_DEV`
@@ -30,6 +34,22 @@ firebase functions:secrets:set GOOGLE_GENAI_API_KEY
 ## Flutter Firebase Config
 
 The Flutter web client uses the checked-in Firebase configuration at [client/semur/lib/firebase_options.dart](../client/semur/lib/firebase_options.dart).
+
+For local emulator-backed demos, run the client with:
+
+```bash
+flutter run -d chrome --dart-define=USE_FIREBASE_EMULATORS=true
+```
+
+This connects the web client to local Auth, Firestore, and Functions emulators
+on `localhost` using the default ports `9099`, `8080`, and `5001`. Override the
+host when needed:
+
+```bash
+flutter run -d chrome \
+  --dart-define=USE_FIREBASE_EMULATORS=true \
+  --dart-define=FIREBASE_EMULATOR_HOST=127.0.0.1
+```
 
 Current platform support:
 

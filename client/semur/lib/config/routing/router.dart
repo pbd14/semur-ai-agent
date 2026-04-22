@@ -8,6 +8,7 @@ import 'package:semur/modules/auth/screens/auth_change_password_screen.dart';
 import 'package:semur/modules/auth/screens/auth_link_email_screen.dart';
 import 'package:semur/modules/auth/welcome_screen/welcome_screen.dart';
 import 'package:semur/modules/dashboard/screens/gmail_inbox_screen/gmail_inbox_screen.dart';
+import 'package:semur/modules/demo/demo_chat_screen.dart';
 import 'package:semur/modules/external_apps/screens/all_external_app_integrations_screen.dart';
 import 'package:semur/modules/integrations/screens/all_integrations_screen.dart';
 import 'package:semur/modules/user/screens/user_edit_screen/edit_user_screen.dart';
@@ -19,6 +20,7 @@ class AppRouter extends RootStackRouter {
   @override
   List<AutoRoute> get routes => [
     AutoRoute(page: WelcomeRoute.page, initial: true, path: "/"),
+    AutoRoute(page: DemoChatRoute.page, path: "/demo"),
     AutoRoute(page: MainRoute.page, path: "/main"),
     AutoRoute(page: GmailInboxRoute.page, path: "/inbox"),
 

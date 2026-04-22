@@ -19,6 +19,7 @@ class ChatComponent extends StatefulWidget {
   onSendMessage;
   final bool isLoading;
   final String? currentSessionId;
+  final bool needIntegrationSelected;
 
   const ChatComponent({
     super.key,
@@ -26,6 +27,7 @@ class ChatComponent extends StatefulWidget {
     this.onSendMessage,
     this.isLoading = false,
     this.currentSessionId,
+    this.needIntegrationSelected = true,
   });
 
   @override
@@ -103,7 +105,7 @@ class _ChatComponentState extends State<ChatComponent> {
           Expanded(child: _buildEmptyState()),
           if (widget.onSendMessage != null)
             ChatInputComponent(
-              needIntegrationSelected: true,
+              needIntegrationSelected: widget.needIntegrationSelected,
               messageController: _messageController,
               onSendMessage: widget.onSendMessage,
               isLoading: widget.isLoading,
@@ -155,7 +157,7 @@ class _ChatComponentState extends State<ChatComponent> {
           ),
           if (widget.onSendMessage != null)
             ChatInputComponent(
-              needIntegrationSelected: true,
+              needIntegrationSelected: widget.needIntegrationSelected,
               messageController: _messageController,
               onSendMessage: widget.onSendMessage,
               isLoading: widget.isLoading,

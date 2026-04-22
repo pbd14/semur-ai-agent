@@ -10,6 +10,17 @@ flutter gen-l10n
 flutter run -d chrome
 ```
 
+## Reproducible Demo Mode
+
+Start the backend emulators from `server/functions`, seed demo data, then run:
+
+```bash
+flutter run -d chrome --dart-define=USE_FIREBASE_EMULATORS=true
+```
+
+Open `/demo` and use `Run sample demo` to show the deterministic multi-agent
+response and collaboration trace without signing in or selecting integrations.
+
 ## Build For Web
 
 ```bash

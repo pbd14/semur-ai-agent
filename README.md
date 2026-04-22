@@ -49,9 +49,33 @@ Review my inbox and calendar for tomorrow. Identify urgent emails, find scheduli
 ```bash
 cd server/functions
 npm install
+```
+
+For the reproducible course demo, start the local emulators:
+
+```bash
+cd server/functions
+npm run serve:demo
+```
+
+In a second terminal, seed the emulator data:
+
+```bash
+cd server/functions
+npm run seed:demo
+```
+
+The demo seed creates a local demo user, active demo Gmail and Google Calendar
+connections, fixture email/calendar records, and minimal app configuration.
+The deterministic demo endpoint does not require Nango, Gmail, Calendar, or
+Google AI secrets.
+
+For live integration mode, configure Firebase secrets:
+
+```bash
+cd server/functions
 firebase functions:secrets:set NANGO_SECRET_KEY_DEV
 firebase functions:secrets:set GOOGLE_GENAI_API_KEY
-npm run serve:demo
 ```
 
 Runtime configuration details are documented in [docs/runtime-config.md](docs/runtime-config.md).
@@ -64,6 +88,17 @@ flutter pub get
 flutter gen-l10n
 flutter run -d chrome
 ```
+
+For the local demo route backed by emulators:
+
+```bash
+cd client/semur
+flutter run -d chrome --dart-define=USE_FIREBASE_EMULATORS=true
+```
+
+Open `/demo` in the launched web app and select `Run sample demo`. The expected
+result is a deterministic executive response plus an "Agent Collaboration"
+timeline showing Email Triage Agent, Calendar Planning Agent, and Drafting Agent.
 
 For a production web build:
 
@@ -80,12 +115,14 @@ Backend:
 cd server/functions
 npm run build
 npm run lint
+npm test
 ```
 
 Flutter web:
 
 ```bash
 cd client/semur
+flutter test
 flutter build web
 ```
 

@@ -74,5 +74,6 @@ module.exports = defineConfig([{
     "generated/**/*",
     "models.pb/**/*",
     "eslint.config.js",
+    "scripts/*.cjs",
     "src/index.ts",
 ])]);

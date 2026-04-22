@@ -41,6 +41,36 @@ class AgentEmailAssistantEngine {
     }
   }
 
+  static Future<AgentDemoChatOutputWrapper> demoChat({
+    required bool isDev,
+    required String userMessage,
+    required String sessionId,
+  }) async {
+    try {
+      HttpsCallableResult result = await callEndpoint(
+        isDev,
+        'demoChat',
+      ).call({
+        'userMessage': userMessage,
+        'sessionId': sessionId,
+      });
+
+      if (result.data == null || result.data.isEmpty) {
+        return AgentDemoChatOutputWrapper(
+          error: SemurEngineErrorCode.NO_DATA_RECEIVED,
+          message: "No data returned from the server",
+          chatOutput: "",
+          agentTraceOutput: "",
+        );
+      }
+      return AgentDemoChatOutputWrapper.fromJson(
+        Map<String, dynamic>.from(result.data),
+      );
+    } catch (e) {
+      throw Exception("${e.toString()}}");
+    }
+  }
+
   static Future<EmailAssistantGenerateResponseEmailOutputWrapper>
   generateEmailResponse({
     required bool isDev,
@@ -121,5 +151,34 @@ class EmailAssistantGenerateResponseEmailOutputWrapper {
       return false;
     }
     return true;
+  }
+}
+
+class AgentDemoChatOutputWrapper {
+  final SemurEngineErrorCode error;
+  final String message;
+  final String chatOutput;
+  final String agentTraceOutput;
+
+  const AgentDemoChatOutputWrapper({
+    required this.error,
+    required this.message,
+    required this.chatOutput,
+    required this.agentTraceOutput,
+  });
+
+  factory AgentDemoChatOutputWrapper.fromJson(Map<String, dynamic> json) {
+    return AgentDemoChatOutputWrapper(
+      error: toSemurEngineErrorCode(
+        json['error'] ?? SemurEngineErrorCode.CUSTOM_ERROR.value,
+      ),
+      message: json['message'] ?? "",
+      chatOutput: json['chatOutput'] ?? "",
+      agentTraceOutput: json['agentTraceOutput'] ?? "",
+    );
+  }
+
+  bool isSuccess() {
+    return error == SemurEngineErrorCode.NO_ERROR && message.isNotEmpty;
   }
 }

@@ -108,6 +108,54 @@ class AuthLinkEmailRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [DemoChatScreen]
+class DemoChatRoute extends PageRouteInfo<DemoChatRouteArgs> {
+  DemoChatRoute({
+    Key? key,
+    DemoChatClient? demoChatClient,
+    List<PageRouteInfo>? children,
+  }) : super(
+         DemoChatRoute.name,
+         args: DemoChatRouteArgs(
+           key: key,
+           demoChatClient: demoChatClient,
+         ),
+         initialChildren: children,
+       );
+
+  static const String name = 'DemoChatRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<DemoChatRouteArgs>(
+        orElse: () => const DemoChatRouteArgs(),
+      );
+      return DemoChatScreen(
+        key: args.key,
+        demoChatClient: args.demoChatClient,
+      );
+    },
+  );
+}
+
+class DemoChatRouteArgs {
+  const DemoChatRouteArgs({
+    this.key,
+    this.demoChatClient,
+  });
+
+  final Key? key;
+
+  final DemoChatClient? demoChatClient;
+
+  @override
+  String toString() {
+    return 'DemoChatRouteArgs{key: $key, demoChatClient: $demoChatClient}';
+  }
+}
+
+/// generated route for
 /// [EditUserScreen]
 class EditUserRoute extends PageRouteInfo<EditUserRouteArgs> {
   EditUserRoute({Key? key, bool isSetup = false, List<PageRouteInfo>? children})
