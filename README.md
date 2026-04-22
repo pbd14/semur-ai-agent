@@ -13,14 +13,20 @@ The project is designed to demonstrate how multiple AI roles can collaborate on 
 
 ## Agent Collaboration Model
 
-Semur is organized around these AI collaboration roles:
+The chat API is exposed through `agent_email_assistant[-dev]-chat`, but Semur routes in-app chat requests through an explicit executive orchestrator. The orchestrator runs specialist agents sequentially so each step can persist safely to the chat session and so graders can see the collaboration trail.
 
-- Executive Orchestrator: interprets the user's business request and decides which specialist capabilities are needed.
-- Email Specialist: searches and summarizes Gmail or Outlook messages, identifies urgent items, and extracts action items.
-- Calendar Specialist: checks calendar context and scheduling constraints.
-- Drafting Assistant: prepares concise professional replies and follow-up messages from the combined context.
+- Executive Orchestrator: interprets the user's business request, calls specialists, and produces the final recommendation.
+- Email Triage Agent: uses read-only Gmail or Outlook tools to find relevant messages, rank urgent items, and extract actions.
+- Calendar Planning Agent: uses calendar tools to find conflicts and scheduling windows; it is marked skipped when no calendar connection is selected.
+- Drafting Agent: prepares concise reply or follow-up drafts from the specialist reports. It has no send-email tools.
 
-The implementation includes the core email assistant flow, chat helper flows, email/calendar tools, and integration plumbing needed for the class demonstration.
+Each final Semur app response stores an `agentTrace` JSON artifact on the assistant chat message and the Flutter UI renders it as an "Agent Collaboration" timeline above related email artifacts.
+
+Sample phase-two demo prompt:
+
+```text
+Review my inbox and calendar for tomorrow. Identify urgent emails, find scheduling conflicts, and draft responses for anything that needs action before noon.
+```
 
 ## Project Layout
 

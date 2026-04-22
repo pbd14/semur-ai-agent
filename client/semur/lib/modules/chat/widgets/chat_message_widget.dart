@@ -6,6 +6,8 @@ import 'package:markdown_widget/config/all.dart';
 import 'package:markdown_widget/widget/all.dart';
 import 'package:semur/global/app_colors.dart';
 import 'package:semur/models.pb/chats/chat.pb.dart';
+import 'package:semur/modules/chat/models/agent_collaboration_trace.dart';
+import 'package:semur/modules/chat/widgets/agent_collaboration_trace_widget.dart';
 import 'package:semur/modules/chat/widgets/chat_artifacts_widget.dart';
 
 class ChatMessageWidget extends StatefulWidget {
@@ -97,6 +99,9 @@ class _ChatMessageWidgetState extends State<ChatMessageWidget>
     final isUser = widget.message.role == ChatRole.USER;
     final isModel = widget.message.role == ChatRole.MODEL;
     final isTool = widget.message.role == ChatRole.TOOL;
+    final collaborationTrace = AgentCollaborationTrace.tryParse(
+      widget.message.hasOutput() ? widget.message.output : '',
+    );
 
     // Special UI for tool calls
     if (isTool) {
@@ -326,6 +331,11 @@ class _ChatMessageWidgetState extends State<ChatMessageWidget>
                           ),
                         ),
                       ),
+                      if (_showFollowUps && collaborationTrace != null) ...[
+                        AgentCollaborationTraceWidget(
+                          trace: collaborationTrace,
+                        ),
+                      ],
                       // Artifacts
                       if (widget.message.hasArtifacts() &&
                           _showFollowUps) ...[

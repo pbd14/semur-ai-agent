@@ -14,6 +14,10 @@ class ChatMessageFirebaseTransformer {
         author: data["author"],
         content: data["content"],
         followUpQuestions: List<String>.from(data["followUpQuestions"] ?? []),
+        output: data["output"] ?? '',
+        toolName: data["toolName"] ?? '',
+        toolRequestJson: data["toolRequestJson"] ?? '',
+        toolResponseJson: data["toolResponseJson"] ?? '',
         metadata:
             data["metadata"] != null
                 ? ChatMetadata(
@@ -88,6 +92,22 @@ class ChatMessageFirebaseTransformer {
       "artifacts":
           message.hasField(message.getTagNumber("artifacts") ?? 0)
               ? message.artifacts
+              : null,
+      "output":
+          message.hasField(message.getTagNumber("output") ?? 0)
+              ? message.output
+              : null,
+      "toolName":
+          message.hasField(message.getTagNumber("toolName") ?? 0)
+              ? message.toolName
+              : null,
+      "toolRequestJson":
+          message.hasField(message.getTagNumber("toolRequestJson") ?? 0)
+              ? message.toolRequestJson
+              : null,
+      "toolResponseJson":
+          message.hasField(message.getTagNumber("toolResponseJson") ?? 0)
+              ? message.toolResponseJson
               : null,
     };
   }

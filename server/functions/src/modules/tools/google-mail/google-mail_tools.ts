@@ -38,8 +38,9 @@ export class GoogleMailTools {
         nangoIntegrationId: string,
         connectionId: string,
         session: ChatSession,
+        options: { includeSend?: boolean } = {},
     ) {
-        return [
+        const tools = [
             // WARN: For unknown reasons, this method is causing issues with the agent's ability to call tools.
             // GoogleMailTools.googleMailSearchEmailById(
             //     ai,
@@ -76,13 +77,16 @@ export class GoogleMailTools {
                 connectionId,
                 session,
             ).getTool(),
-            GoogleMailTools.googleMailSendEmail(
+        ];
+        if (options.includeSend !== false) {
+            tools.push(GoogleMailTools.googleMailSendEmail(
                 ai,
                 nangoSecret,
                 connectionId,
                 session,
-            ).getTool(),
-        ];
+            ).getTool());
+        }
+        return tools;
     }
 
     // WARN: For unknown reasons, this method is causing issues with the agent's ability to call tools.

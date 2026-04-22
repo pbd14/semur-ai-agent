@@ -293,7 +293,7 @@ export class GoogleCalendarTools {
                 };
             },
             session,
-            AgentTool.GOOGLE_MAIL_VECTOR_SEARCH,
+            AgentTool.GOOGLE_CALENDAR_VECTOR_SEARCH,
             () => {
                 return {
                     events: [],

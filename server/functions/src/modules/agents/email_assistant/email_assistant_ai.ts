@@ -31,6 +31,7 @@ import {AgentChatHelper} from "../../../helpers/agent_chat_helper";
 import {OutlookMailTools} from "../../tools/outlook-mail/outlook-mail_tools";
 import {getNangoSecret} from "../../../runtime/runtime_config";
 import {IntegrationIds} from "../../../runtime/integration_ids";
+import {ExecutiveOrchestrator} from "./executive_orchestrator";
 
 const moduleName = SemurEngineConfig.isDev ? "agent_email_assistant-dev" : "agent_email_assistant";
 
@@ -139,6 +140,7 @@ export const chatFlow = ai.defineFlow(
                         emailConnection.id,
                         emailConnection.connectionId,
                         session,
+                        {includeSend: app !== "semur"},
                     ));
                     break;
                 case IntegrationIds.outlookMail:
@@ -171,18 +173,14 @@ export const chatFlow = ai.defineFlow(
 
         // Initialize artifacts manager
         const artifactsManager = new EmailAssistantChatArtifactsManager();
-        let tools = [
+        const mentionEmailTool = app === "semur" ?
+            artifactsManager.mentionEmailTool(ai, session, emailConnections[0].id) :
+            undefined;
+        const tools = [
+            ...(mentionEmailTool ? [mentionEmailTool] : []),
             ...emailTools,
             ...calendarTools,
         ];
-        // If Semur app, add email mention tool as well
-        if (app === "semur") {
-            tools = [
-                artifactsManager.mentionEmailTool(ai, session, emailConnections[0].id),
-                ...emailTools,
-                ...calendarTools,
-            ];
-        }
 
         // Load chat history
         const chatHistory = await AgentChatService.getChatHistory(session.id, userId);
@@ -213,6 +211,55 @@ export const chatFlow = ai.defineFlow(
         ];
 
         try {
+            if (app === "semur") {
+                const orchestratorOutput = await ExecutiveOrchestrator.run({
+                    ai,
+                    userMessage,
+                    chatHistory,
+                    emailTools: [
+                        ...(mentionEmailTool ? [mentionEmailTool] : []),
+                        ...emailTools,
+                    ],
+                    calendarTools,
+                    finalTools: mentionEmailTool ? [mentionEmailTool] : [],
+                    hasCalendarConnection: calendarConnections.length > 0,
+                    fastMode,
+                    proMode,
+                    agentMood: GeminiModelsMoods.convertStringToMood(agentMood),
+                    context,
+                });
+
+                session.currentMessageIndex = await AgentChatService.addNewMessageToSession(
+                    session.id,
+                    userId,
+                    ChatMessage.create({
+                        id: session.currentMessageIndex + 1,
+                        role: ChatRole.MODEL,
+                        author: "Executive Orchestrator",
+                        content: orchestratorOutput.replyText,
+                        metadata: ChatMetadata.create({
+                            emailAssistant: EmailAssistantChatMetadata.create({
+                                totalEmailsAnalyzed: artifactsManager.totalEmailsAnalyzed,
+                                timeRange: artifactsManager.timeRange,
+                            }),
+                        }),
+                        artifacts: ChatArtifacts.create({
+                            emailAssistant: EmailAssistantChatArtifacts.create({
+                                mentionedEmails: artifactsManager.mentionedEmails,
+                            }),
+                        }),
+                        output: orchestratorOutput.traceOutput,
+                        followUpQuestions: await ChatHelper.generateFollowupQuestions(userMessage, orchestratorOutput.replyText),
+                        createdAt: new Date(),
+                    }),
+                );
+                return AgentChatOutput.create({
+                    error: SemurEngineErrorCode.NO_ERROR,
+                    message: "Success",
+                    chatOutput: orchestratorOutput.replyText,
+                });
+            }
+
             const response = await AgentChatHelper.callAiGenerateWithRetry(
                 ai,
                 fastMode,
