@@ -6,7 +6,7 @@ Date assessed: 2026-04-20
 
 Semur is not ready for final course submission yet.
 
-The backend currently builds and lints, and the Flutter web app can produce a production build. However, the project does not yet clearly satisfy the course requirement for demonstrable multi-agent collaboration, the submitted GitHub repository would miss the Flutter client unless packaging is fixed, the test/analysis gates are not green, and the README does not yet include the required member contribution section.
+The backend currently builds and lints, and the Flutter web app can produce a production build. However, the project still needs the final test/analysis story, security cleanup, and a polished grader-facing submission pass before it is ready for final course submission.
 
 The project is in a recoverable state. The shortest path to submission is to turn the existing email/calendar assistant into an explicit multi-agent demo, make the runnable UI/API reproducible for graders, clean the repository, and update the documentation.
 
@@ -27,12 +27,11 @@ Notable findings:
 - The backend exports one main assistant surface: `agent_email_assistant` / `agent_email_assistant_dev`.
 - The current assistant has Gmail, Outlook Mail, and Google Calendar tools, plus helper flows for chat naming and follow-up question generation.
 - The current backend does not expose an explicit orchestrator that delegates work between separate specialist agents.
-- The root repository ignores `/client`, and `client/semur` is a nested Git repository. A root GitHub submission currently would not include the Flutter UI.
+- The root repository now tracks `client/semur`, `README.md`, and `docs/` in the same submission repo, so the Flutter UI and grader-facing docs are included together.
 - `demo/web` only contains ignored build/dependency artifacts and no source files.
-- The root README is untracked and contains machine-local absolute paths such as `/Users/behruz/Development/Semur/semur-code/...`.
-- The client README is still the default Flutter starter README.
-- There are no backend tests in the tracked server source tree.
-- The only Flutter test is the default counter test and fails against the actual Semur app.
+- The root README and client README are tracked and now document the reproducible demo path with repository-relative links.
+- Backend tests now exist in the tracked server source tree for the executive orchestrator and deterministic demo flow.
+- Flutter widget tests now cover Semur-specific chat and demo surfaces instead of the default counter app.
 - The root working tree has many uncommitted changes, untracked files, and deleted tracked artifacts.
 - A previously tracked OAuth secret file has been deleted locally, but that credential must still be rotated and removed from any public history before publishing.
 - No Firestore rules or indexes are tracked under `server/`.
@@ -45,10 +44,10 @@ Notable findings:
 | Multiple agent collaboration | Not clearly met. Current code is mainly one assistant using tools. | High |
 | Functional API or UI | Partially met. Backend builds, Flutter web builds, but live use depends on Firebase/Nango/Google secrets and OAuth setup. | High |
 | Demonstrates role of multi-agent problem solving | Not yet met in UI/API. No visible delegation trace or specialist-agent output. | High |
-| README with clear run instructions | Partially met. Root README exists locally but is untracked and uses local absolute paths. | High |
+| README with clear run instructions | Partially met. Root README is tracked, uses relative links, and documents the demo flow, but the final grader-facing sections still need to stay aligned with the submission gates. | Medium |
 | Code comments | Partially met. Some comments exist, but architecture-level clarity is missing for grader review. | Medium |
-| Specific coding contribution of each member | Missing. | High |
-| GitHub source repository link | Not ready. Current root repo would omit the client and has dirty/untracked work. | High |
+| Specific coding contribution of each member | Met in the README after the named team contribution section was added. | Low |
+| GitHub source repository link | Partially met. The client source is tracked in the root repository, but the final submission still depends on a clean, accessible repo state. | Medium |
 
 ## Priority Plan
 
@@ -212,43 +211,39 @@ Expected outcome:
 
 Goal: make the repository understandable and runnable by a fresh grader.
 
-Root README should include:
+Status on 2026-04-28:
 
-- Project name and one-paragraph problem statement.
-- Clear explanation of why executive email/calendar assistance needs multiple agents.
-- Architecture section with orchestrator and specialist agents.
-- Project layout.
-- Prerequisites:
-  - Node 22
-  - Firebase CLI
-  - Flutter SDK
-  - Java/Chrome requirements if needed
-- Setup instructions from fresh clone.
-- Demo mode instructions that do not require private credentials.
-- Optional live integration instructions for Nango, Gmail, Outlook, Google Calendar, and Google AI.
-- Environment/secret list with descriptions, not secret values.
-- Exact verification commands.
-- Demo script with sample prompt and expected output.
-- Limitations and known issues.
-- Contribution section naming each student and what they built.
+- [README.md](../README.md) already covers the project overview, multi-agent architecture, project layout, backend setup, reproducible demo flow, relative links, and the sample grader demo prompt.
+- The README verification commands remain aligned with the current backend scripts: `npm run build`, `npm run lint`, and `npm test`.
 
-Use relative links instead of local absolute links. For example:
+Implementation update on 2026-04-28:
 
-```md
-[runtime config](docs/runtime-config.md)
-[Flutter Firebase options](client/semur/lib/firebase_options.dart)
+- The root README now documents the reproducible demo path with `npm run serve:demo`, `npm run seed:demo`, and `flutter run -d chrome --dart-define=USE_FIREBASE_EMULATORS=true`.
+- The root README explains the `/demo` flow and points graders to the visible "Agent Collaboration" timeline that renders the orchestrator `agentTrace` output in the Flutter UI.
+- The root README now includes a compact runtime/secrets section for `NANGO_SECRET_KEY_DEV`, `GOOGLE_GENAI_API_KEY`, and optional `TELEGRAM_BOT_TOKEN`, with a link to [docs/runtime-config.md](./runtime-config.md).
+- The root README now includes a "Limitations and Known Issues" section covering the web-first demo scope, fixture-backed `/demo`, live integration prerequisites, and review-only drafts.
+- The root README now names team ownership explicitly:
+  - Behruz Pulatov: executive orchestrator, backend email and calendar agent flows, backend tests, Firebase demo setup.
+  - Javokhir: Flutter web client, `/demo` route, agent-collaboration trace UI, grader-facing documentation, and runtime/demo UX.
+
+Remaining work before phase 5 is fully closed:
+
+- Verify `flutter analyze` from a machine with Flutter available on `PATH` and keep the README verification block aligned with the final submission gate.
+- Confirm the contribution wording still matches the final division of work if responsibilities change before submission.
+
+Acceptance checks:
+
+```bash
+rg -n '^## ' README.md
+rg -n 'flutter analyze|Behruz Pulatov|Javokhir|NANGO_SECRET_KEY_DEV|GOOGLE_GENAI_API_KEY|TELEGRAM_BOT_TOKEN|Limitations|Known Issues' README.md
+rg -n 'Student 1|Student 2|placeholder|root README is untracked|miss the Flutter client|no backend tests|default counter test' README.md docs/submission-readiness-plan.md
 ```
 
-Contribution section template:
+Expected outcome:
 
-```md
-## Team Contributions
-
-- Student 1: Orchestrator flow, email specialist agent, backend tests, Firebase demo setup.
-- Student 2: Calendar specialist agent, drafting agent, Flutter collaboration trace UI, README/demo documentation.
-```
-
-Replace the placeholders with the actual student names and real work performed.
+- The root README is a grader-facing entrypoint instead of a local-development placeholder.
+- The README documents both the no-secret demo path and the live-integration secret names without exposing secret values.
+- The README names each team member's contribution explicitly.
 
 ### 6. Clean Security And Configuration
 

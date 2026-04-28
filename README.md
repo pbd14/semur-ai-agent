@@ -80,6 +80,14 @@ firebase functions:secrets:set GOOGLE_GENAI_API_KEY
 
 Runtime configuration details are documented in [docs/runtime-config.md](docs/runtime-config.md).
 
+## Runtime And Secrets
+
+- `NANGO_SECRET_KEY_DEV`: required for live Nango-backed Gmail, Outlook Mail, and Google Calendar integrations; not required for the deterministic `/demo` path.
+- `GOOGLE_GENAI_API_KEY`: required for live AI-backed assistant responses outside the deterministic demo flow.
+- `TELEGRAM_BOT_TOKEN`: optional; only needed when the Telegram integration and webhook setup are enabled.
+
+For the full runtime configuration and emulator notes, see [docs/runtime-config.md](docs/runtime-config.md).
+
 ## Flutter Web Setup
 
 ```bash
@@ -123,10 +131,18 @@ Flutter web:
 ```bash
 cd client/semur
 flutter test
+flutter analyze
 flutter build web
 ```
 
+## Limitations and Known Issues
+
+- The graded demo path is web-first. Native Android, iOS, macOS, Linux, and Windows targets need fresh Firebase platform configuration before live deployment.
+- The `/demo` route is fixture-backed and deterministic. It is designed for reproducible grading, not for showing live inbox or calendar state.
+- Live Gmail, Outlook Mail, and Google Calendar integrations require external credentials, Firebase secrets, and Nango setup that are intentionally optional for the course demo path.
+- The multi-agent Semur chat path produces review-only drafts. It does not auto-send email on the user's behalf.
+
 ## Team Contributions
 
-- Backend and AI agent engineering: Firebase Functions, Genkit flows, email/calendar tools, Nango integration, and shared protobuf contracts.
-- Client and product experience: Flutter web app, chat interface, integration screens, inbox UI, runtime documentation, and demo setup.
+- Behruz Pulatov: executive orchestrator, backend email and calendar agent flows, backend tests, Firebase demo setup, and shared backend/runtime plumbing.
+- Javokhir: Flutter web client, `/demo` route, agent-collaboration trace UI, grader-facing documentation, and runtime/demo UX.
