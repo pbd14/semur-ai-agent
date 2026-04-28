@@ -23,10 +23,9 @@ import 'package:semur/global/widgets/default_rounded_button.dart';
 import 'package:semur/modules/user/bloc/edit_user_bloc/edit_user_bloc.dart';
 
 @RoutePage()
-// ignore: must_be_immutable
 class EditUserScreen extends StatefulWidget {
-  bool isSetup;
-  EditUserScreen({super.key, this.isSetup = false});
+  final bool isSetup;
+  const EditUserScreen({super.key, this.isSetup = false});
 
   @override
   State<EditUserScreen> createState() => _EditUserScreenState();

@@ -125,7 +125,6 @@ class _ChatInputComponentState extends State<ChatInputComponent> {
 
   @override
   void dispose() {
-    widget.messageController.dispose();
     _focusNode.dispose();
     super.dispose();
   }
@@ -290,7 +289,7 @@ class _ChatInputComponentState extends State<ChatInputComponent> {
                                                         width: 1,
                                                       ),
                                                       color: _currentAgentMood == mood
-                                                          ? _getMoodColor(mood).withOpacity(0.1)
+                                                          ? _getMoodColor(mood).withValues(alpha: 0.1)
                                                           : Colors.transparent,
                                                     ),
                                                     child: Row(
@@ -351,7 +350,7 @@ class _ChatInputComponentState extends State<ChatInputComponent> {
                                                         width: 1,
                                                       ),
                                                       color: _currentMode == mode
-                                                          ? AppColors.primaryColor.withOpacity(0.1)
+                                                          ? AppColors.primaryColor.withValues(alpha: 0.1)
                                                           : Colors.transparent,
                                                     ),
                                                     child: Text(
@@ -503,7 +502,7 @@ class _ChatInputComponentState extends State<ChatInputComponent> {
                                           color: _getMoodColor(_currentAgentMood),
                                           width: 1,
                                         ),
-                                        color: _getMoodColor(_currentAgentMood).withOpacity(0.1),
+                                        color: _getMoodColor(_currentAgentMood).withValues(alpha: 0.1),
                                       ),
                                       child: Row(
                                         mainAxisSize: MainAxisSize.min,
@@ -529,7 +528,7 @@ class _ChatInputComponentState extends State<ChatInputComponent> {
                                           Icon(
                                             CupertinoIcons.chevron_down,
                                             size: 10,
-                                            color: _getMoodColor(_currentAgentMood).withOpacity(0.7),
+                                            color: _getMoodColor(_currentAgentMood).withValues(alpha: 0.7),
                                           ),
                                         ],
                                       ),
@@ -658,10 +657,10 @@ class _ChatInputComponentState extends State<ChatInputComponent> {
                             shape: BoxShape.circle,
                             color:
                                 _selectedConnections.isNotEmpty
-                                    ? AppColors.primaryColor.withOpacity(0.1)
-                                    : AppColors.lightGrayColor.withOpacity(0.5),
+                                    ? AppColors.primaryColor.withValues(alpha: 0.1)
+                                    : AppColors.lightGrayColor.withValues(alpha: 0.5),
                             border: Border.all(
-                              color: AppColors.primaryColor.withOpacity(0.3),
+                              color: AppColors.primaryColor.withValues(alpha: 0.3),
                               width: 1,
                             ),
                           ),
@@ -779,10 +778,10 @@ class _ChatInputComponentState extends State<ChatInputComponent> {
                               ),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(16),
-                                color: AppColors.primaryColor.withOpacity(0.1),
+                                color: AppColors.primaryColor.withValues(alpha: 0.1),
                                 border: Border.all(
-                                  color: AppColors.primaryColor.withOpacity(
-                                    0.3,
+                                  color: AppColors.primaryColor.withValues(
+                                    alpha: 0.3,
                                   ),
                                   width: 1,
                                 ),

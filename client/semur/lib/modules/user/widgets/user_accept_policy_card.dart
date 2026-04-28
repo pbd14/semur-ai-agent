@@ -75,6 +75,9 @@ class _UserAcceptPolicyCardState extends State<UserAcceptPolicyCard> {
         Log.e("Error in UserAcceptPolicyCard", e);
         widget.onError();
       }
+      if (!mounted) {
+        return;
+      }
       setState(() {
         loading = false;
       });

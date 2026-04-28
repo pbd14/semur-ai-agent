@@ -86,6 +86,9 @@ class _EmailDetailOverlayState extends State<EmailDetailOverlay>
     // Fetch full email
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await getEmail();
+      if (!mounted) {
+        return;
+      }
       // Update the recipient after we fetch the email
       if (email != null) {
         _recipientController.text = widget.email.senderEmail;
@@ -304,7 +307,7 @@ class _EmailDetailOverlayState extends State<EmailDetailOverlay>
                   vertical: 8,
                 ),
                 decoration: BoxDecoration(
-                  color: AppColors.primaryColor.withOpacity(0.1),
+                  color: AppColors.primaryColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -324,7 +327,7 @@ class _EmailDetailOverlayState extends State<EmailDetailOverlay>
                 decoration: BoxDecoration(
                   color: _getImportanceColor(
                     widget.email.importanceScore,
-                  ).withOpacity(0.1),
+                  ).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -455,10 +458,10 @@ class _EmailDetailOverlayState extends State<EmailDetailOverlay>
               padding: const EdgeInsets.all(12),
               margin: const EdgeInsets.only(bottom: 16),
               decoration: BoxDecoration(
-                color: Colors.red.withOpacity(0.1),
+                color: Colors.red.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: Colors.red.withOpacity(0.3),
+                  color: Colors.red.withValues(alpha: 0.3),
                   width: 1,
                 ),
               ),
@@ -605,10 +608,10 @@ class _EmailDetailOverlayState extends State<EmailDetailOverlay>
               padding: const EdgeInsets.all(12),
               margin: const EdgeInsets.only(bottom: 16),
               decoration: BoxDecoration(
-                color: Colors.green.withOpacity(0.1),
+                color: Colors.green.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: Colors.green.withOpacity(0.3),
+                  color: Colors.green.withValues(alpha: 0.3),
                   width: 1,
                 ),
               ),

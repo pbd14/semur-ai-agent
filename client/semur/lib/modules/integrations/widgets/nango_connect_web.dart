@@ -2,19 +2,20 @@ import 'dart:js_interop';
 import 'dart:js_interop_unsafe';
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:semur/global/log/log.dart';
 import 'package:web/web.dart' as web;
 
 class NangoConnectModal extends StatefulWidget {
   final String sessionToken;
-  final Function(String) onConnect;
-  final Function()? onClose;
+  final void Function(String) onConnect;
+  final VoidCallback? onClose;
 
   const NangoConnectModal({
-    Key? key,
+    super.key,
     required this.sessionToken,
     required this.onConnect,
     this.onClose,
-  }) : super(key: key);
+  });
 
   @override
   State<NangoConnectModal> createState() => _NangoConnectModalState();
@@ -35,6 +36,9 @@ class _NangoConnectModalState extends State<NangoConnectModal> {
   Future<void> _loadNangoAndInitialize() async {
     try {
       await _loadNangoScript();
+      if (!mounted) {
+        return;
+      }
 
       setState(() {
         _scriptLoaded = true;
@@ -42,11 +46,17 @@ class _NangoConnectModalState extends State<NangoConnectModal> {
       });
 
       // Give more time for the module to initialize
-      await Future.delayed(Duration(milliseconds: 500));
+      await Future.delayed(const Duration(milliseconds: 500));
+      if (!mounted) {
+        return;
+      }
 
       _initializeNango();
     } catch (e) {
-      print('💥 Error loading Nango: $e');
+      Log.e('Error loading Nango: $e');
+      if (!mounted) {
+        return;
+      }
       setState(() {
         _error = 'Failed to load: $e';
         _isLoading = false;
@@ -89,7 +99,7 @@ class _NangoConnectModalState extends State<NangoConnectModal> {
     script.addEventListener(
       'error',
       (web.Event event) {
-        print('❌ Script error event fired');
+        Log.e('Nango script error event fired');
         web.window.removeEventListener('nangoLoaded', eventListener);
         completer.completeError('Failed to load Connect UI script');
       }.toJS,
@@ -98,7 +108,7 @@ class _NangoConnectModalState extends State<NangoConnectModal> {
     web.document.head!.appendChild(script);
 
     // Add timeout fallback
-    Timer(Duration(seconds: 10), () {
+    Timer(const Duration(seconds: 10), () {
       if (!completer.isCompleted) {
         web.window.removeEventListener('nangoLoaded', eventListener);
         completer.completeError('Timeout loading Connect UI module');
@@ -150,13 +160,13 @@ class _NangoConnectModalState extends State<NangoConnectModal> {
                 final eventType = eventData['type'] as String;
 
                 if (eventType == 'close') {
-                  print('❌ Connect UI closed');
+                  Log.d('Nango Connect UI closed');
                   if (mounted) {
                     widget.onClose?.call();
                     Navigator.pop(context);
                   }
                 } else if (eventType == 'connect') {
-                  print('🔗 Connect UI success: $eventData');
+                  Log.d('Nango Connect UI success: $eventData');
                   if (mounted) {
                     widget.onConnect(eventData.toString());
                     Navigator.pop(context);
@@ -164,7 +174,7 @@ class _NangoConnectModalState extends State<NangoConnectModal> {
                 }
               }
             } catch (e) {
-              print('Error processing event: $e');
+              Log.e('Error processing Nango event: $e');
             }
           }).toJS;
 
@@ -190,8 +200,7 @@ class _NangoConnectModalState extends State<NangoConnectModal> {
         _status = 'Ready!';
       });
     } catch (e, stackTrace) {
-      print('💥 Error initializing Nango: $e');
-      print('📋 Stack trace: $stackTrace');
+      Log.e('Error initializing Nango: $e', e, stackTrace);
       setState(() {
         _error = 'Failed to initialize Connect UI: $e';
         _isLoading = false;

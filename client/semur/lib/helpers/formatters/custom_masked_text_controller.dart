@@ -161,7 +161,6 @@ class CustomMaskedTextControllerAlpha extends TextEditingController {
     addListener(() {
       final masked = _applyMask(mask!, this.text);
       if (this.text != masked) {
-        //print('updating to $masked');
         value = value.copyWith(
           text: masked,
           //selection: TextSelection.collapsed(offset: masked.isNotEmpty ? masked.length : -1),
@@ -169,8 +168,6 @@ class CustomMaskedTextControllerAlpha extends TextEditingController {
               TextPosition(offset: masked.isNotEmpty ? masked.length : -1)),
           composing: TextRange.empty,
         );
-      } else {
-        //print('${this.text} = $masked');
       }
     });
   }

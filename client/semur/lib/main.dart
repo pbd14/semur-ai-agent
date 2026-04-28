@@ -139,7 +139,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       await Application.setupSharedPreferences();
       await Application.setupTimezone();
       await Application.setLanguageFromSharedPrefs();
-      await Application.setAppLocalizations(context);
+      await Application.setAppLocalizations();
       // await Config.init();
       // RegulaService.initConfig = regula.InitConfig(await rootBundle.load("assets/regula.license"));
 
@@ -159,7 +159,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       );
 
       // Set up the URI link stream listener
-      Application.appLinks.uriLinkStream.listen((uri) async {
+      Application.appLinks.uriLinkStream.listen((uri) {
         handleAppLink(uri);
       });
 
@@ -192,7 +192,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   // Extract URI handling logic to a separate method
-  void handleAppLink(Uri uri) async {
+  void handleAppLink(Uri uri) {
     Log.d("APP LINK ${uri.path}");
     // Remove # if present at the beginning of the path
     if (uri.path.startsWith('#')) {
@@ -255,6 +255,9 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   void initState() {
     startApplication().then((_) {
+      if (!mounted) {
+        return;
+      }
       setState(() {
         _initialized = true;
       });

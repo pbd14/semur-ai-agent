@@ -60,7 +60,7 @@ class MentionedEmailCard extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(4),
-                        color: AppColors.primaryColor.withOpacity(0.1),
+                        color: AppColors.primaryColor.withValues(alpha: 0.1),
                       ),
                       child: Text(
                         email.provider.toUpperCase(),
@@ -221,7 +221,7 @@ class ImportanceLabelBadge extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(4),
-        color: _getImportanceColor().withOpacity(0.1),
+        color: _getImportanceColor().withValues(alpha: 0.1),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

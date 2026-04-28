@@ -34,11 +34,16 @@ Locale _locale(String languageCode) {
       : const Locale('ru', '');
 }
 
-void changeLanguage(BuildContext context, String selectedLanguageCode) async {
+Future<void> changeLanguage(
+  BuildContext context,
+  String selectedLanguageCode,
+) async {
   Log.d("Chaging language to $selectedLanguageCode");
   var locale = await setLocale(selectedLanguageCode);
-  await Application.setAppLocalizations(context);
-  MyApp.setLocale(context, locale);
+  await Application.setAppLocalizations();
+  if (context.mounted) {
+    MyApp.setLocale(context, locale);
+  }
 
   // Update firestore
   if (AppUser.user.hasId()) {

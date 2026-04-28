@@ -271,7 +271,7 @@ class _ChatNangoConnectionSelectorModalState
                           bottomRight: Radius.circular(15.0),
                         )
                         : null,
-                color: isDisabled ? AppColors.lightGrayColor.withOpacity(0.3) : null,
+                color: isDisabled ? AppColors.lightGrayColor.withValues(alpha: 0.3) : null,
               ),
               child: Row(
                 children: [
@@ -354,7 +354,7 @@ class _ChatNangoConnectionSelectorModalState
                           borderRadius: BorderRadius.circular(12),
                           color: _getStatusColor(
                             connection.status,
-                          ).withOpacity(0.1),
+                          ).withValues(alpha: 0.1),
                         ),
                         child: Text(
                           _getStatusText(connection.status),
@@ -477,7 +477,7 @@ class _ChatNangoConnectionSelectorModalState
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
-              color: AppColors.lightGrayColor.withOpacity(0.3),
+              color: AppColors.lightGrayColor.withValues(alpha: 0.3),
             ),
             child: Text(
               'Selection limits: ${_getCategoryLimitText()}',

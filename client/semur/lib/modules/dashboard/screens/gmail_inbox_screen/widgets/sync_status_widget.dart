@@ -122,7 +122,7 @@ class SyncStatusWidget extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                color: _getStatusColor().withOpacity(0.1),
+                color: _getStatusColor().withValues(alpha: 0.1),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,

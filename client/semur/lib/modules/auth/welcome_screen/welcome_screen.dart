@@ -37,7 +37,7 @@ class WelcomeScreen extends StatefulWidget {
 class _WelcomeScreenState extends State<WelcomeScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  TextEditingController phoneController = CustomMaskedTextController(
+  final TextEditingController phoneController = CustomMaskedTextController(
     text: '',
     mask: '([0][0][0]) [0][0] [0][0][0] [0][0] [0][0]',
   );
@@ -103,6 +103,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   void dispose() {
     // _bloc!.close();
     sub?.cancel();
+    phoneController.dispose();
+    _smsCodeController.dispose();
     if (_timer != null) {
       _timer!.cancel();
     }

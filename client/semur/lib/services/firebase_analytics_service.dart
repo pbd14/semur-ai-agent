@@ -1,4 +1,5 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:semur/global/log/log.dart';
 
 class FirebaseAnalyticsService {
   final FirebaseAnalytics analytics;
@@ -11,18 +12,18 @@ class FirebaseAnalyticsService {
     Map<String, Object>? parameters,
   }) async {
     if (isDevMode) {
-      print('Logging event: ${getFirebaseAnalyticsEventName(event)}');
-      print('Event parameters: $parameters');
+      Log.d('Logging event: ${getFirebaseAnalyticsEventName(event)}');
+      Log.d('Event parameters: $parameters');
       return;
     }
 
     try {
-      await FirebaseAnalytics.instance.logEvent(
+      await analytics.logEvent(
         name: getFirebaseAnalyticsEventName(event),
         parameters: parameters,
       );
     } catch (e) {
-      print('Error logging event: $e');
+      Log.e('Error logging event: $e');
     }
   }
 }

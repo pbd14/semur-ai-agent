@@ -74,6 +74,9 @@ class _GmailInboxScreenState extends State<GmailInboxScreen> {
       });
       // Load more emails when button is pressed
       await loadPageOfEmails(currentState.lastDocument);
+      if (!mounted) {
+        return;
+      }
       setState(() {
         isLoadingMore = false;
       });
@@ -156,6 +159,9 @@ class _GmailInboxScreenState extends State<GmailInboxScreen> {
         Application.appLocalizations!.errorTryAgainLater,
         NotificationType.error,
       );
+    }
+    if (!mounted) {
+      return;
     }
     setState(() {
       isSyncing = false;
@@ -294,7 +300,7 @@ class _GmailInboxScreenState extends State<GmailInboxScreen> {
                   foregroundColor: AppColors.primaryColor,
                   elevation: 0,
                   side: BorderSide(
-                    color: AppColors.primaryColor.withOpacity(0.2),
+                    color: AppColors.primaryColor.withValues(alpha: 0.2),
                   ),
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(

@@ -93,6 +93,7 @@ class _ChatComponentState extends State<ChatComponent> {
   @override
   void dispose() {
     _scrollController.dispose();
+    _messageController.dispose();
     super.dispose();
   }
 
@@ -117,42 +118,40 @@ class _ChatComponentState extends State<ChatComponent> {
       return Column(
         children: [
           Expanded(
-            child: Container(
-              child: ListView.builder(
-                key: ValueKey(widget.messages.length),
-                controller: _scrollController,
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                itemCount: widget.messages.length + (widget.isLoading ? 1 : 0),
-                reverse: true, // This makes the list start from bottom
-                itemBuilder: (context, index) {
-                  // If this is the loading indicator item (always at index 0 when reverse: true)
-                  if (widget.isLoading && index == 0) {
-                    return const ChatMessageShimmer();
-                  }
+            child: ListView.builder(
+              key: ValueKey(widget.messages.length),
+              controller: _scrollController,
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              itemCount: widget.messages.length + (widget.isLoading ? 1 : 0),
+              reverse: true, // This makes the list start from bottom
+              itemBuilder: (context, index) {
+                // If this is the loading indicator item (always at index 0 when reverse: true)
+                if (widget.isLoading && index == 0) {
+                  return const ChatMessageShimmer();
+                }
 
-                  // Adjust index for shimmer when loading
-                  final adjustedIndex = widget.isLoading ? index - 1 : index;
-                  // Reverse the index since we're using reverse: true
-                  final actualIndex =
-                      widget.messages.length - 1 - adjustedIndex;
-                  final message = widget.messages[actualIndex];
-                  final shouldAnimate = !_animatedMessages.contains(message.id);
+                // Adjust index for shimmer when loading
+                final adjustedIndex = widget.isLoading ? index - 1 : index;
+                // Reverse the index since we're using reverse: true
+                final actualIndex =
+                    widget.messages.length - 1 - adjustedIndex;
+                final message = widget.messages[actualIndex];
+                final shouldAnimate = !_animatedMessages.contains(message.id);
 
-                  // Mark this message as animated after first render
-                  if (shouldAnimate) {
-                    _animatedMessages.add(message.id);
-                  }
+                // Mark this message as animated after first render
+                if (shouldAnimate) {
+                  _animatedMessages.add(message.id);
+                }
 
-                  return ChatMessageWidget(
-                    key: ValueKey(message.id),
-                    message: message,
-                    onFollowUpQuestion: (String text) {
-                      _messageController.text = text;
-                    },
-                    animateText: shouldAnimate,
-                  );
-                },
-              ),
+                return ChatMessageWidget(
+                  key: ValueKey(message.id),
+                  message: message,
+                  onFollowUpQuestion: (String text) {
+                    _messageController.text = text;
+                  },
+                  animateText: shouldAnimate,
+                );
+              },
             ),
           ),
           if (widget.onSendMessage != null)
@@ -196,7 +195,7 @@ class _ChatComponentState extends State<ChatComponent> {
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
-                color: AppColors.lightGrayColor.withOpacity(0.5),
+                color: AppColors.lightGrayColor.withValues(alpha: 0.5),
                 border: Border.all(color: AppColors.lightGrayColor, width: 1),
               ),
               child: Column(

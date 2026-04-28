@@ -174,7 +174,7 @@ class _ExternalAppIntegrationCardState
                                 borderRadius: BorderRadius.circular(12),
                                 color: _getStatusColor(
                                   widget.integration.status,
-                                ).withOpacity(0.1),
+                                ).withValues(alpha: 0.1),
                               ),
                               child: Text(
                                 _getStatusText(widget.integration.status),

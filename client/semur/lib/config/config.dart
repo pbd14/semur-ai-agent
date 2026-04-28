@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-// Conditionally import web plugins
 import 'package:flutter_web_plugins/url_strategy.dart';
 
 class Config {
@@ -19,7 +18,6 @@ class Config {
 
   static void setUrlStrategy() {
     if (kIsWeb) {
-      // ignore: undefined_function
       usePathUrlStrategy();
     }
   }

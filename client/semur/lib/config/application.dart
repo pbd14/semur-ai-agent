@@ -48,7 +48,7 @@ class Application {
   // AppLocalizations
   static AppLocalizations? appLocalizations;
 
-  static Future<void> setAppLocalizations(BuildContext context) async {
+  static Future<void> setAppLocalizations() async {
     appLocalizations = await AppLocalizations.delegate.load(
       Locale(language ?? 'en'),
     );

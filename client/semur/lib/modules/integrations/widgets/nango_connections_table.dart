@@ -375,7 +375,7 @@ class _NangoConnectionsTableState extends State<NangoConnectionsTable> {
                                   borderRadius: BorderRadius.circular(12),
                                   color: _getStatusColor(
                                     connection.status,
-                                  ).withOpacity(0.1),
+                                  ).withValues(alpha: 0.1),
                                 ),
                                 child: Text(
                                   _getStatusText(connection.status),
@@ -420,7 +420,7 @@ class _NangoConnectionsTableState extends State<NangoConnectionsTable> {
                                   borderRadius: BorderRadius.circular(12),
                                   color: _getSyncStatusColor(
                                     syncInfo?.status,
-                                  ).withOpacity(0.1),
+                                  ).withValues(alpha: 0.1),
                                 ),
                                 child: Text(
                                   _getSyncStatusText(syncInfo?.status),

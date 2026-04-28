@@ -169,7 +169,7 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  void blocListener(BuildContext context, state) async {
+  void blocListener(BuildContext context, state) {
     Log.w("Bloc state changed: $state");
     if (state is AppError) {
       showNotification(state.errorText, NotificationType.error);
