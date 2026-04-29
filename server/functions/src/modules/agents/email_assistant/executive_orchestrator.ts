@@ -3,6 +3,7 @@ import {MessageData} from "@genkit-ai/ai/lib/model-types";
 import {logger} from "firebase-functions";
 import {AgentMood} from "../../../models.pb/agents/agent";
 import {GeminiModelsConfig, GeminiModelsMoods} from "../gemini_models_config";
+import {AgentChatHelper} from "../../../helpers/agent_chat_helper";
 
 export enum AgentTraceStatus {
     Completed = "completed",
@@ -299,11 +300,12 @@ export class ExecutiveOrchestrator {
         trace: AgentTraceStep[],
     ): Promise<SpecialistReport | null> {
         try {
+            const tools = AgentChatHelper.prepareToolsForGenerate(config.tools);
             const response = await input.ai.generate({
                 model: modelForMode(input.fastMode, input.proMode),
                 messages: ExecutiveOrchestrator.buildSpecialistMessages(input, config),
-                tools: config.tools,
-                maxTurns: config.tools.length > 0 ? 8 : 1,
+                tools: tools,
+                maxTurns: tools.length > 0 ? 8 : 1,
                 context: input.context,
                 config: generationConfig(
                     input.agentMood,
@@ -366,6 +368,7 @@ export class ExecutiveOrchestrator {
             trace: AgentTraceStep[];
         },
     ): Promise<string> {
+        const finalTools = AgentChatHelper.prepareToolsForGenerate(input.finalTools);
         const response = await input.ai.generate({
             model: modelForMode(input.fastMode, input.proMode),
             messages: [
@@ -388,8 +391,8 @@ export class ExecutiveOrchestrator {
                     }],
                 },
             ],
-            tools: input.finalTools,
-            maxTurns: input.finalTools.length > 0 ? 4 : 1,
+            tools: finalTools,
+            maxTurns: finalTools.length > 0 ? 4 : 1,
             context: input.context,
             config: generationConfig(input.agentMood, FINAL_RESPONSE_MAX_OUTPUT_TOKENS),
         });

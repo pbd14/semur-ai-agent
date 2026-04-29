@@ -28,8 +28,31 @@ type GenerateResponse = {
     text?: string;
 };
 
+type ToolWithRegistry = ToolAction & {
+    __action?: {
+        name?: string;
+        metadata?: {
+            dynamic?: boolean;
+            type?: string;
+        };
+    };
+    __registry?: unknown;
+};
+
 function tool(name: string): ToolAction {
     return {name} as unknown as ToolAction;
+}
+
+function dynamicTool(name: string): ToolAction {
+    return {
+        __action: {
+            name,
+            metadata: {
+                dynamic: true,
+                type: "tool",
+            },
+        },
+    } as unknown as ToolAction;
 }
 
 function createMockAi(responses: (GenerateResponse | Error)[]) {
@@ -239,6 +262,46 @@ test("ExecutiveOrchestrator.run skips drafting specialist for summary-only reque
         AgentTraceStatus.Skipped,
     ]);
     assert.equal(output.trace.agentTrace[2].outputSummary, "The request did not ask for reply drafts or follow-up message text.");
+});
+
+test("ExecutiveOrchestrator.run can reuse a dynamic mention tool across generate phases", async () => {
+    const mentionTool = dynamicTool("semur_chat_mention_email");
+    const registryStateAtMentionCalls: unknown[] = [];
+    const responses = [
+        specialistOutput("Email triage found one urgent item.", ["email-1"]),
+        specialistOutput("Drafting prepared one review-only draft.", ["email-1"]),
+        {text: "Final response with mentioned email."},
+    ];
+    const ai = {
+        generate: async (options: GenerateOptions): Promise<GenerateResponse> => {
+            for (const candidate of options.tools || []) {
+                const toolCandidate = candidate as ToolWithRegistry;
+                const registryCarrier = candidate as unknown as { __registry?: unknown };
+                if (toolCandidate.__action?.name === "semur_chat_mention_email") {
+                    registryStateAtMentionCalls.push(registryCarrier.__registry);
+                }
+                if (toolCandidate.__action?.metadata?.dynamic === true) {
+                    registryCarrier.__registry = {stale: true};
+                }
+            }
+            const response = responses.shift();
+            assert(response, "mock generate response was not configured");
+            return response;
+        },
+    } as unknown as Genkit;
+
+    const output = await ExecutiveOrchestrator.run(baseRunInput(ai, {
+        emailTools: [
+            mentionTool,
+            tool("google_mail_search_common_filters"),
+        ],
+        calendarTools: [],
+        finalTools: [mentionTool],
+        hasCalendarConnection: false,
+    }));
+
+    assert.equal(output.replyText, "Final response with mentioned email.");
+    assert.deepEqual(registryStateAtMentionCalls, [undefined, undefined]);
 });
 
 test("ExecutiveOrchestrator.run skips calendar specialist when no calendar connection is selected", async () => {

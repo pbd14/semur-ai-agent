@@ -5,6 +5,15 @@ import {GenerateResponse} from "@genkit-ai/ai";
 import {GeminiModelsConfig} from "../modules/agents/gemini_models_config";
 import {Genkit, ToolAction} from "genkit";
 
+type ReusableDynamicToolAction = ToolAction & {
+    __action?: {
+        metadata?: {
+            dynamic?: boolean;
+        };
+    };
+    __registry?: unknown;
+};
+
 export class AgentChatHelper {
     static transformChatRoleToGenkitRole(role: ChatRole): "system" | "user" | "model" | "tool" {
         switch (role) {
@@ -156,19 +165,20 @@ export class AgentChatHelper {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ): Promise<GenerateResponse<any>> {
         try {
+            const preparedTools = this.prepareToolsForGenerate(tools);
             logger.info("AI Generate call", {
                 model: fastMode ? GeminiModelsConfig.fastModel : (proMode ? GeminiModelsConfig.proModel : GeminiModelsConfig.normalModel),
                 messages: messages,
-                tools: tools.map((t) => t),
+                tools: preparedTools.map((t) => t),
                 maxTurns: maxTurns,
                 context: context,
             });
-            logger.info("Tools available", tools.map((t) => t));
+            logger.info("Tools available", preparedTools.map((t) => t));
 
             const response = await ai.generate({
                 model: fastMode ? GeminiModelsConfig.fastModel : (proMode ? GeminiModelsConfig.proModel : GeminiModelsConfig.normalModel),
                 messages: messages,
-                tools: tools,
+                tools: preparedTools,
                 maxTurns: maxTurns,
                 context: context,
                 // TODO: Enable later
@@ -197,5 +207,17 @@ export class AgentChatHelper {
                 throw e;
             }
         }
+    }
+
+    static prepareToolsForGenerate<T extends ToolAction>(tools: T[]): T[] {
+        for (const tool of tools) {
+            const reusableTool = tool as ReusableDynamicToolAction;
+            // Genkit attaches dynamic tools to a per-call child registry. Reusing the
+            // same tool object later leaves a stale /tool/... reference unless reset.
+            if (reusableTool.__action?.metadata?.dynamic === true) {
+                delete reusableTool.__registry;
+            }
+        }
+        return tools;
     }
 }
