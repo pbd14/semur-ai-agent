@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:semur/config/application.dart';
@@ -11,9 +10,9 @@ import 'package:semur/helpers/nango_integration_helper.dart';
 import 'package:semur/models.pb/nango/nango.pbserver.dart';
 import 'package:intl/intl.dart';
 import 'package:semur/models.pb/syncs/sync.pb.dart';
-import 'package:semur/semur_engine/syncs/google-calendar_sync_engine.dart';
-import 'package:semur/semur_engine/syncs/google-mail_sync_engine.dart';
-import 'package:semur/semur_engine/syncs/outlook-mail_sync_engine.dart';
+import 'package:semur/semur_engine/syncs/google_calendar_sync_engine.dart';
+import 'package:semur/semur_engine/syncs/google_mail_sync_engine.dart';
+import 'package:semur/semur_engine/syncs/outlook_mail_sync_engine.dart';
 import 'package:semur/services/notification_service.dart';
 
 class NangoConnectionsTable extends StatefulWidget {
@@ -490,7 +489,7 @@ class _NangoConnectionsTableState extends State<NangoConnectionsTable> {
                         ],
                       ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );

@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:semur/config/application.dart';
 import 'package:semur/global/log/log.dart';
 import 'package:semur/helpers/platform/platform_info.dart';

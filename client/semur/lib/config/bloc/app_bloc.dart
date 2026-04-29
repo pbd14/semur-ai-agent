@@ -12,7 +12,6 @@ import 'package:semur/global/log/log.dart';
 import 'package:semur/l10n/locale_constant.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:semur/models.pb/user/user.pb.dart';
-import 'package:semur/models.pb/user/user.pbenum.dart';
 import 'package:semur/services/firebase_analytics_service.dart';
 import 'package:semur/services/notification_service.dart';
 import 'package:semur/transformers/users/user_firebase_transformer.dart';
@@ -66,9 +65,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
             }
           }
 
-          SemurVarsModel semurVars = await Application
-              .accessors
-              .appDataAccessor
+          SemurVarsModel semurVars = await Application.accessors.appDataAccessor
               .get(callerRole: AppUser.currentCallerRole);
 
           // Check Web App status
@@ -157,7 +154,9 @@ class AppBloc extends Bloc<AppEvent, AppState> {
               .doc(AppUser.user.id)
               .snapshots()
               .listen((userSnapshot) async {
-                SemurUser user = UserFirebaseTransformer.fromFirebase(userSnapshot);
+                SemurUser user = UserFirebaseTransformer.fromFirebase(
+                  userSnapshot,
+                );
                 if (user.status == UserStatus.CREATED) {
                   add(const AppEmit(state: AppUserCreated()));
                 } else if ([
@@ -188,7 +187,12 @@ class AppBloc extends Bloc<AppEvent, AppState> {
                   if (AppUser.user.hasId() &&
                       (!AppUser.user.hasLanguage() ||
                           AppUser.user.language != Application.language)) {
-                    changeLanguage(event.context, Application.language ?? "en");
+                    if (event.context.mounted) {
+                      changeLanguage(
+                        event.context,
+                        Application.language ?? "en",
+                      );
+                    }
                   }
 
                   // Initialize Notification Service
@@ -202,8 +206,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
                           SharedPreferencesKeys.privacyPolicyVersion,
                         ) ??
                         0;
-                    if (semurVars.privacyPolicyVersion >
-                        privacyPolicyVersion) {
+                    if (semurVars.privacyPolicyVersion > privacyPolicyVersion) {
                       isPrivacyDocumentAccepted = false;
                     }
                   } catch (e) {
@@ -228,8 +231,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
                   Application.firebaseAnalyticsService.logEvent(
                     FirebaseAnalyticsEvent.errorUserUnknown,
                     parameters: {
-                      "error":
-                          "Unknown error with user status: ${user.status}",
+                      "error": "Unknown error with user status: ${user.status}",
                     },
                   );
                   add(
@@ -265,7 +267,9 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           if (FirebaseAuth.instance.currentUser!.emailVerified) {
             try {
               await AppUser.loadFromFirebase();
-              add(AppInitialize(context: event.context));
+              if (event.context.mounted) {
+                add(AppInitialize(context: event.context));
+              }
             } catch (e) {
               Log.e("Email Verify Error");
               emit(

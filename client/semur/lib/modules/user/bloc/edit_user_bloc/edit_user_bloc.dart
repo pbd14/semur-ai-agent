@@ -6,7 +6,6 @@ import 'package:semur/config/application.dart';
 import 'package:semur/global/app_user.dart';
 import 'package:semur/global/log/log.dart';
 import 'package:semur/models.pb/user/user.pb.dart';
-import 'package:semur/models.pb/user/user.pbenum.dart';
 import 'package:semur/services/firebase_analytics_service.dart';
 
 part 'edit_user_event.dart';

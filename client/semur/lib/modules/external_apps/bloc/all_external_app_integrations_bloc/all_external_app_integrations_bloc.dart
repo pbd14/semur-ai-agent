@@ -23,7 +23,7 @@ class AllExternalAppIntegrationsBloc
           List<ExternalAppIntegration> externalAppIntegrations =
               await Application.accessors.userExternalAppsAccessor.getQuery(
                 callerRole: AppUser.currentCallerRole,
-                queryKey: UserExternalAppsAccessorQueryKey.ALL,
+                queryKey: UserExternalAppsAccessorQueryKey.all,
                 arguments: {"userId": AppUser.user.id},
               );
           emit(
@@ -72,7 +72,7 @@ class AllExternalAppIntegrationsBloc
           List<ExternalAppIntegration> externalAppIntegrations =
               await Application.accessors.userExternalAppsAccessor.getQuery(
                 callerRole: AppUser.currentCallerRole,
-                queryKey: UserExternalAppsAccessorQueryKey.ALL,
+                queryKey: UserExternalAppsAccessorQueryKey.all,
                 arguments: {"userId": AppUser.user.id},
               );
           emit(
@@ -133,7 +133,7 @@ class AllExternalAppIntegrationsBloc
           List<ExternalAppIntegration> externalAppIntegrations =
               await Application.accessors.userExternalAppsAccessor.getQuery(
                 callerRole: AppUser.currentCallerRole,
-                queryKey: UserExternalAppsAccessorQueryKey.ALL,
+                queryKey: UserExternalAppsAccessorQueryKey.all,
                 arguments: {"userId": AppUser.user.id},
               );
           emit(

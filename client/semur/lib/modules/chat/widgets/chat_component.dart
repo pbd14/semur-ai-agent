@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:semur/global/app_colors.dart';
@@ -38,6 +40,7 @@ class _ChatComponentState extends State<ChatComponent> {
   final ScrollController _scrollController = ScrollController();
   final Set<int> _animatedMessages = <int>{};
   final TextEditingController _messageController = TextEditingController();
+  Timer? _scrollRetryTimer;
 
   @override
   void initState() {
@@ -69,6 +72,7 @@ class _ChatComponentState extends State<ChatComponent> {
   }
 
   void _scrollToBottom() {
+    _scrollRetryTimer?.cancel();
     if (_scrollController.hasClients) {
       // With reverse: true, scrolling to 0 means showing the latest messages
       _scrollController.animateTo(
@@ -78,7 +82,10 @@ class _ChatComponentState extends State<ChatComponent> {
       );
     } else {
       // If no clients yet, try again after a delay
-      Future.delayed(const Duration(milliseconds: 100), () {
+      _scrollRetryTimer = Timer(const Duration(milliseconds: 100), () {
+        if (!mounted) {
+          return;
+        }
         if (_scrollController.hasClients) {
           _scrollController.animateTo(
             0,
@@ -92,6 +99,7 @@ class _ChatComponentState extends State<ChatComponent> {
 
   @override
   void dispose() {
+    _scrollRetryTimer?.cancel();
     _scrollController.dispose();
     _messageController.dispose();
     super.dispose();
@@ -133,8 +141,7 @@ class _ChatComponentState extends State<ChatComponent> {
                 // Adjust index for shimmer when loading
                 final adjustedIndex = widget.isLoading ? index - 1 : index;
                 // Reverse the index since we're using reverse: true
-                final actualIndex =
-                    widget.messages.length - 1 - adjustedIndex;
+                final actualIndex = widget.messages.length - 1 - adjustedIndex;
                 final message = widget.messages[actualIndex];
                 final shouldAnimate = !_animatedMessages.contains(message.id);
 
@@ -167,72 +174,96 @@ class _ChatComponentState extends State<ChatComponent> {
   }
 
   Widget _buildEmptyState() {
-    return Center(
-      child: Container(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset("assets/icons/Logo512.png", width: 80),
-            const SizedBox(height: 24),
-            Text(
-              'Start a conversation',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                color: AppColors.primaryColor,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Ask questions, get summaries, or manage your integrations using AI assistance.',
-              textAlign: TextAlign.center,
-              style: Theme.of(
-                context,
-              ).textTheme.bodyMedium?.copyWith(color: AppColors.lightDarkColor),
-            ),
-            const SizedBox(height: 24),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                color: AppColors.lightGrayColor.withValues(alpha: 0.5),
-                border: Border.all(color: AppColors.lightGrayColor, width: 1),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        CupertinoIcons.lightbulb,
-                        size: 16,
-                        color: AppColors.primaryColor,
-                      ),
-                      const SizedBox(width: 6),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isCompact = constraints.maxHeight < 280;
+
+        return SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: Center(
+              child: Padding(
+                padding: EdgeInsets.all(isCompact ? 16 : 32),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (!isCompact) ...[
+                      Image.asset("assets/icons/Logo512.png", width: 80),
+                      const SizedBox(height: 24),
+                    ],
+                    Text(
+                      'Start a conversation',
+                      style: (isCompact
+                              ? Theme.of(context).textTheme.titleMedium
+                              : Theme.of(context).textTheme.headlineSmall)
+                          ?.copyWith(
+                            color: AppColors.primaryColor,
+                            fontWeight: FontWeight.w600,
+                          ),
+                    ),
+                    if (!isCompact) ...[
+                      const SizedBox(height: 8),
                       Text(
-                        'Try asking:',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppColors.primaryColor,
-                          fontWeight: FontWeight.w600,
+                        'Ask questions, get summaries, or manage your integrations using AI assistance.',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: AppColors.lightDarkColor,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: AppColors.lightGrayColor.withValues(
+                            alpha: 0.5,
+                          ),
+                          border: Border.all(
+                            color: AppColors.lightGrayColor,
+                            width: 1,
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  CupertinoIcons.lightbulb,
+                                  size: 16,
+                                  color: AppColors.primaryColor,
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  'Try asking:',
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.bodySmall?.copyWith(
+                                    color: AppColors.primaryColor,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              '• "Summarize my emails from today"\n'
+                              '• "Show me important messages"\n'
+                              '• "What integrations do I have?"',
+                              style: Theme.of(context).textTheme.bodySmall
+                                  ?.copyWith(color: AppColors.lightDarkColor),
+                            ),
+                          ],
                         ),
                       ),
                     ],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '• "Summarize my emails from today"\n'
-                    '• "Show me important messages"\n'
-                    '• "What integrations do I have?"',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppColors.lightDarkColor,
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

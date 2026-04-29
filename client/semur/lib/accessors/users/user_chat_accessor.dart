@@ -4,10 +4,10 @@ import 'package:semur/config/application.dart';
 import 'package:semur/models.pb/chats/chat.pb.dart';
 import 'package:semur/transformers/users/chat_firebase_transformer.dart';
 
-enum UserChatAccessorQueryKey { ALL }
+enum UserChatAccessorQueryKey { all }
 
 Map<UserChatAccessorQueryKey, List<String>> userChatAccessorQueryArguments = {
-  UserChatAccessorQueryKey.ALL: ["userId"],
+  UserChatAccessorQueryKey.all: ["userId"],
 };
 
 class UserChatAccessor {
@@ -30,7 +30,7 @@ class UserChatAccessor {
 
     // Build query based on key
     switch (queryKey) {
-      case UserChatAccessorQueryKey.ALL:
+      case UserChatAccessorQueryKey.all:
         return firestore
             .collection(UserAccessor.firebaseCollectionName)
             .doc(arguments['userId'])

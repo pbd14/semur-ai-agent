@@ -139,14 +139,14 @@ class _ChatNangoConnectionSelectorModalState
   String _getCategoryLimitText() {
     Map<AgentCategory, int> currentCounts = _getSelectedCategoryCounts();
     List<String> limitTexts = [];
-    
+
     numberOfIntegrationsPerAgentCategory.forEach((category, maxCount) {
       int currentCount = currentCounts[category] ?? 0;
       String categoryName = category.name.toLowerCase();
       categoryName = categoryName[0].toUpperCase() + categoryName.substring(1);
       limitTexts.add('$categoryName: $currentCount/$maxCount');
     });
-    
+
     return limitTexts.join(' • ');
   }
 
@@ -271,7 +271,10 @@ class _ChatNangoConnectionSelectorModalState
                           bottomRight: Radius.circular(15.0),
                         )
                         : null,
-                color: isDisabled ? AppColors.lightGrayColor.withValues(alpha: 0.3) : null,
+                color:
+                    isDisabled
+                        ? AppColors.lightGrayColor.withValues(alpha: 0.3)
+                        : null,
               ),
               child: Row(
                 children: [
@@ -290,9 +293,10 @@ class _ChatNangoConnectionSelectorModalState
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(
-                                color: isDisabled 
-                                    ? AppColors.lightGrayColor 
-                                    : AppColors.primaryColor,
+                                color:
+                                    isDisabled
+                                        ? AppColors.lightGrayColor
+                                        : AppColors.primaryColor,
                                 width: 1,
                               ),
                               color: Colors.transparent,
@@ -311,12 +315,14 @@ class _ChatNangoConnectionSelectorModalState
                               children: [
                                 Text(
                                   _formatProviderName(connection.provider),
-                                  style: Theme.of(context).textTheme.bodyMedium
-                                      ?.copyWith(
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.bodyMedium?.copyWith(
                                     fontWeight: FontWeight.w600,
-                                    color: isDisabled 
-                                        ? AppColors.lightDarkColor 
-                                        : null,
+                                    color:
+                                        isDisabled
+                                            ? AppColors.lightDarkColor
+                                            : null,
                                   ),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
@@ -327,9 +333,10 @@ class _ChatNangoConnectionSelectorModalState
                                   style: Theme.of(
                                     context,
                                   ).textTheme.bodySmall?.copyWith(
-                                    color: isDisabled 
-                                        ? AppColors.secondaryColor 
-                                        : AppColors.greenColor,
+                                    color:
+                                        isDisabled
+                                            ? AppColors.secondaryColor
+                                            : AppColors.greenColor,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -374,7 +381,10 @@ class _ChatNangoConnectionSelectorModalState
                     child: Container(
                       alignment: Alignment.center,
                       child: InkWell(
-                        onTap: isDisabled ? null : () => _toggleConnection(connection),
+                        onTap:
+                            isDisabled
+                                ? null
+                                : () => _toggleConnection(connection),
                         borderRadius: BorderRadius.circular(12),
                         child: Container(
                           padding: const EdgeInsets.all(8),
@@ -382,14 +392,14 @@ class _ChatNangoConnectionSelectorModalState
                             isSelected
                                 ? CupertinoIcons.checkmark_circle_fill
                                 : isDisabled
-                                    ? CupertinoIcons.minus_circle
-                                    : CupertinoIcons.circle,
+                                ? CupertinoIcons.minus_circle
+                                : CupertinoIcons.circle,
                             color:
                                 isSelected
                                     ? AppColors.primaryColor
                                     : isDisabled
-                                        ? AppColors.lightGrayColor
-                                        : AppColors.lightDarkColor,
+                                    ? AppColors.lightGrayColor
+                                    : AppColors.lightDarkColor,
                             size: 24,
                           ),
                         ),
@@ -399,7 +409,7 @@ class _ChatNangoConnectionSelectorModalState
                 ],
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );

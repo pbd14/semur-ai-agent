@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -20,7 +19,7 @@ import 'package:semur/models.pb/syncs/sync_google-mail.pb.dart';
 import 'package:semur/modules/dashboard/bloc/gmail_inbox_bloc/gmail_inbox_bloc.dart';
 import 'package:semur/modules/dashboard/screens/gmail_inbox_screen/widgets/email_item_widget.dart';
 import 'package:semur/modules/dashboard/screens/gmail_inbox_screen/widgets/sync_status_widget.dart';
-import 'package:semur/semur_engine/syncs/google-mail_sync_engine.dart';
+import 'package:semur/semur_engine/syncs/google_mail_sync_engine.dart';
 import 'package:semur/services/notification_service.dart';
 import 'package:semur/transformers/syncs/sync_transformer.dart';
 
@@ -41,7 +40,7 @@ class _GmailInboxScreenState extends State<GmailInboxScreen> {
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   String _searchQuery = '';
-  String _sortOrder = 'newest'; // 'newest' or 'oldest'
+  final String _sortOrder = 'newest'; // 'newest' or 'oldest'
   List<SyncGoogleMailEmail> _filteredEmails = [];
   List<SyncGoogleMailEmail> _allEmails = [];
 
@@ -98,7 +97,7 @@ class _GmailInboxScreenState extends State<GmailInboxScreen> {
           .userSyncGoogleMailAccessor
           .getQueryWithLastDocumentSnapshot(
             callerRole: AppUser.currentCallerRole,
-            queryKey: UserSyncGoogleMailAccessorQueryKey.LATEST_WITH_LAST_DOCUMENT,
+            queryKey: UserSyncGoogleMailAccessorQueryKey.latestWithLastDocument,
             arguments: {
               "userId": AppUser.user.id,
               // TODO: Magic value

@@ -3,11 +3,11 @@ import 'package:semur/config/application.dart';
 import 'package:semur/models.pb/user/user.pb.dart';
 import 'package:semur/transformers/users/user_firebase_transformer.dart';
 
-enum UserAccessorQueryKey { GET_ALL, COUNT_BY_EMAIL }
+enum UserAccessorQueryKey { getAll, countByEmail }
 
 Map<UserAccessorQueryKey, List<String>> userAccessorQueryArguments = {
-  UserAccessorQueryKey.GET_ALL: [],
-  UserAccessorQueryKey.COUNT_BY_EMAIL: ['email'],
+  UserAccessorQueryKey.getAll: [],
+  UserAccessorQueryKey.countByEmail: ['email'],
 };
 
 class UserAccessor {
@@ -30,10 +30,10 @@ class UserAccessor {
 
     // Build query based on key
     switch (queryKey) {
-      case UserAccessorQueryKey.GET_ALL:
+      case UserAccessorQueryKey.getAll:
         return firestore.collection(firebaseCollectionName);
 
-      case UserAccessorQueryKey.COUNT_BY_EMAIL:
+      case UserAccessorQueryKey.countByEmail:
         return firestore
             .collection(firebaseCollectionName)
             .where('email', isEqualTo: arguments['email']);
@@ -136,10 +136,7 @@ class UserAccessor {
       await firestore
           .collection(firebaseCollectionName)
           .doc(user.id)
-          .set(
-            UserFirebaseTransformer.toJson(user),
-            SetOptions(merge: true),
-          );
+          .set(UserFirebaseTransformer.toJson(user), SetOptions(merge: true));
     } catch (e) {
       throw Exception("Error saving user: ${e.toString()}");
     }

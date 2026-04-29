@@ -1,5 +1,4 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:semur/config/application.dart';
 import 'package:semur/config/routing/router.dart';
@@ -110,10 +109,7 @@ class _AuthEmailSignInInitialScreenState
                         }
                       },
                       // Send
-                      iconWidget: Icon(
-                        Icons.send,
-                        color: AppColors.whiteColor,
-                      ),
+                      iconWidget: Icon(Icons.send, color: AppColors.whiteColor),
                       text: Application.appLocalizations!.send,
                       color: AppColors.secondaryColor,
                       textColor: AppColors.whiteColor,
@@ -140,10 +136,7 @@ class _AuthEmailSignInInitialScreenState
                       AuthEmit(state: AuthEmailSignUpInitial()),
                     );
                   },
-                  iconWidget: Icon(
-                    Icons.email,
-                    color: AppColors.whiteColor,
-                  ),
+                  iconWidget: Icon(Icons.email, color: AppColors.whiteColor),
                   text: Application.appLocalizations!.createAccountWithEmail,
                   color: AppColors.primaryColor,
                   textColor: AppColors.whiteColor,

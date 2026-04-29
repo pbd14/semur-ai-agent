@@ -3,18 +3,19 @@ import 'package:semur/config/application.dart';
 import 'package:semur/models.pb/nango/nango.pbserver.dart';
 import 'package:semur/transformers/nango_integration_firebase_transformer.dart';
 
-enum AppDataAccessorQueryKey { GET_ALL }
+enum AppDataAccessorQueryKey { getAll }
 
 class AppDataAccessor {
   static String firebaseCollectionName = "app_data";
   static String firebaseSemurVarsDocumentId = "semur_vars";
   static String firebaseNangoDocumentId = "nango";
-  static String firebaseNangoAvailableIntegrationsCollectionName = "available_integrations";
+  static String firebaseNangoAvailableIntegrationsCollectionName =
+      "available_integrations";
 
   final FirebaseFirestore firestore;
   final Map<AppDataAccessorQueryKey, Query> queries = {};
   AppDataAccessor({required this.firestore}) {
-    queries[AppDataAccessorQueryKey.GET_ALL] = firestore.collection(
+    queries[AppDataAccessorQueryKey.getAll] = firestore.collection(
       firebaseCollectionName,
     );
   }

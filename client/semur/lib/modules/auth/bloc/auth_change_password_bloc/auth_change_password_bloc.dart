@@ -19,7 +19,7 @@ class AuthChangePasswordBloc
           // Check if user exists
           int userCount = await Application.accessors.userAccessor.countQuery(
             callerRole: AppUser.currentCallerRole,
-            queryKey: UserAccessorQueryKey.COUNT_BY_EMAIL,
+            queryKey: UserAccessorQueryKey.countByEmail,
             arguments: {'email': event.email},
           );
 

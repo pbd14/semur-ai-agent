@@ -4,11 +4,11 @@ import 'package:semur/config/application.dart';
 import 'package:semur/models.pb/external_apps/external_app.pbserver.dart';
 import 'package:semur/transformers/users/external_app_firebase_transformer.dart';
 
-enum UserExternalAppsAccessorQueryKey { ALL }
+enum UserExternalAppsAccessorQueryKey { all }
 
 Map<UserExternalAppsAccessorQueryKey, List<String>>
 userExternalAppsAccessorQueryArguments = {
-  UserExternalAppsAccessorQueryKey.ALL: ["userId"],
+  UserExternalAppsAccessorQueryKey.all: ["userId"],
 };
 
 class UserExternalAppsAccessor {
@@ -32,7 +32,7 @@ class UserExternalAppsAccessor {
 
     // Build query based on key
     switch (queryKey) {
-      case UserExternalAppsAccessorQueryKey.ALL:
+      case UserExternalAppsAccessorQueryKey.all:
         return firestore
             .collection(UserAccessor.firebaseCollectionName)
             .doc(arguments['userId'])

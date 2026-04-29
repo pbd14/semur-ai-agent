@@ -62,6 +62,9 @@ class _NangoIntegrationCardState extends State<NangoIntegrationCard> {
                             "${AppUser.user.firstName} ${AppUser.user.lastName}",
                       ),
                     );
+                    if (!context.mounted) {
+                      return;
+                    }
 
                     if (!responseWrapper.isSuccess()) {
                       showNotification(
@@ -90,7 +93,7 @@ class _NangoIntegrationCardState extends State<NangoIntegrationCard> {
                           );
                         },
                         onClose: () {
-                          if(widget.onConnect != null) {
+                          if (widget.onConnect != null) {
                             widget.onConnect!();
                           }
                         },
@@ -99,6 +102,9 @@ class _NangoIntegrationCardState extends State<NangoIntegrationCard> {
                   } catch (e) {
                     Log.e("Error generating session token: ${e.toString()}");
                     showNotification(e.toString(), NotificationType.error);
+                  }
+                  if (!mounted) {
+                    return;
                   }
                   setState(() {
                     loading = false;

@@ -3,11 +3,11 @@ import 'package:semur/config/application.dart';
 import 'package:semur/models.pb/external_apps/telegram_bot_integration.pbserver.dart';
 import 'package:semur/transformers/external_apps/telegram_bot_integration_firebase_transformer.dart';
 
-enum ExternalAppTelegramBotAccessorQueryKey { ALL }
+enum ExternalAppTelegramBotAccessorQueryKey { all }
 
 Map<ExternalAppTelegramBotAccessorQueryKey, List<String>>
 externalAppTelegramBotAccessorQueryArguments = {
-  ExternalAppTelegramBotAccessorQueryKey.ALL: [],
+  ExternalAppTelegramBotAccessorQueryKey.all: [],
 };
 
 class ExternalAppTelegramBotAccessor {
@@ -31,7 +31,7 @@ class ExternalAppTelegramBotAccessor {
 
     // Build query based on key
     switch (queryKey) {
-      case ExternalAppTelegramBotAccessorQueryKey.ALL:
+      case ExternalAppTelegramBotAccessorQueryKey.all:
         return firestore.collection(firebaseCollectionName);
     }
   }

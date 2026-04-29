@@ -6,12 +6,12 @@ import 'package:semur/models.pb/syncs/sync_google-mail.pbserver.dart';
 import 'package:semur/transformers/syncs/sync_google_mail_email_transformer.dart';
 import 'package:semur/transformers/syncs/sync_transformer.dart';
 
-enum UserSyncGoogleMailAccessorQueryKey { ALL, LATEST_WITH_LAST_DOCUMENT }
+enum UserSyncGoogleMailAccessorQueryKey { all, latestWithLastDocument }
 
 Map<UserSyncGoogleMailAccessorQueryKey, List<String>>
 userSyncGoogleMailAccessorQueryArguments = {
-  UserSyncGoogleMailAccessorQueryKey.ALL: ["userId", "nangoIntegrationId"],
-  UserSyncGoogleMailAccessorQueryKey.LATEST_WITH_LAST_DOCUMENT: [
+  UserSyncGoogleMailAccessorQueryKey.all: ["userId", "nangoIntegrationId"],
+  UserSyncGoogleMailAccessorQueryKey.latestWithLastDocument: [
     "userId",
     "nangoIntegrationId",
     "lastDocument",
@@ -42,7 +42,7 @@ class UserSyncGoogleMailAccessor {
 
     // Build query based on key
     switch (queryKey) {
-      case UserSyncGoogleMailAccessorQueryKey.ALL:
+      case UserSyncGoogleMailAccessorQueryKey.all:
         return firestore
             .collection(UserAccessor.firebaseCollectionName)
             .doc(arguments['userId'])
@@ -50,7 +50,7 @@ class UserSyncGoogleMailAccessor {
             .doc(arguments['nangoIntegrationId'])
             .collection(firebaseCollectionName)
             .where("id", isNotEqualTo: firestoreSyncDocumentId);
-      case UserSyncGoogleMailAccessorQueryKey.LATEST_WITH_LAST_DOCUMENT:
+      case UserSyncGoogleMailAccessorQueryKey.latestWithLastDocument:
         Query query = firestore
             .collection(UserAccessor.firebaseCollectionName)
             .doc(arguments['userId'])

@@ -22,7 +22,8 @@ class GmailInboxBloc extends Bloc<GmailInboxEvent, GmailInboxState> {
               .userSyncGoogleMailAccessor
               .getQueryWithLastDocumentSnapshot(
                 callerRole: AppUser.currentCallerRole,
-                queryKey: UserSyncGoogleMailAccessorQueryKey.LATEST_WITH_LAST_DOCUMENT,
+                queryKey:
+                    UserSyncGoogleMailAccessorQueryKey.latestWithLastDocument,
                 arguments: {
                   "userId": AppUser.user.id,
                   // TODO: Magic value

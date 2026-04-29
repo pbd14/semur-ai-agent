@@ -9,7 +9,7 @@ import 'package:semur/global/widgets/default_text_form_field.dart';
 import 'package:semur/models.pb/agents/email_assistant.pb.dart';
 import 'package:semur/models.pb/syncs/sync_google-mail.pb.dart';
 import 'package:semur/semur_engine/agents/email_assistant_engine.dart';
-import 'package:semur/semur_engine/nango/google-mail_engine.dart';
+import 'package:semur/semur_engine/nango/google_mail_engine.dart';
 import 'package:semur/services/notification_service.dart';
 
 import '../../../global/log/log.dart';
@@ -437,7 +437,7 @@ class _EmailDetailOverlayState extends State<EmailDetailOverlay>
   }
 
   Widget _buildGenerateResponseSection() {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

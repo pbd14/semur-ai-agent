@@ -21,7 +21,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:semur/l10n/app_localizations.dart';
 import 'package:semur/global/screens/loading_screen.dart';
 import 'package:semur/models.pb/external_apps/telegram_bot_integration.pbserver.dart';
-import 'package:semur/models.pb/google/protobuf/timestamp.pb.dart';
+import 'package:semur/models.pb/google/protobuf/timestamp.pb.dart' as pb;
 import 'package:semur/modules/auth/bloc/auth/auth_bloc.dart';
 
 @pragma('vm:entry-point')
@@ -222,7 +222,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
               userLastName: userLastName ?? "",
               integrationStatus:
                   TelegramBotIntegrationStatus.TELEGRAM_BOT_ACTIVE,
-              createdAt: Timestamp.fromDateTime(DateTime.now()),
+              createdAt: pb.Timestamp.fromDateTime(DateTime.now()),
             );
         _appRouter.navigate(
           WelcomeRoute(
