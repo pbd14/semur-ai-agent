@@ -161,6 +161,10 @@ rg -n --hidden -g '!**/node_modules/**' -g '!**/build/**' -g '!**/.git/**' "$SEC
 - Live Gmail sending requires the assistant to show the recipients, subject, and body, then ask for explicit yes/no user confirmation before using the send-email tool.
 - Previously exposed external credentials must be rotated by the project owner before public submission; repository checks can confirm absence from files, not provider-side revocation.
 
+## Code Provenance
+
+The application source in this repository was written for the Semur class project by the team members listed below. Generated protobuf files under `client/semur/lib/models.pb` and `server/functions/src/models.pb` come from the checked-in files under `protos/` and the repository generation scripts. Flutter, Firebase, Android, iOS, macOS, Linux, and Windows project files are standard platform scaffolding for this app. Font licenses are included under `client/semur/assets/fonts/`.
+
 ## Team Contributions
 
 - Behruz Pulatov: executive orchestrator, backend email and calendar agent flows, backend tests, Firebase demo setup, and shared backend/runtime plumbing.
