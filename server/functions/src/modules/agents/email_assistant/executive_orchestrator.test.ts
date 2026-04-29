@@ -10,6 +10,7 @@ import {
     ExecutiveOrchestrator,
     filterReadOnlyEmailTools,
     serializeAgentTrace,
+    shouldRunDraftingAgent,
 } from "./executive_orchestrator";
 
 type GenerateOptions = {
@@ -19,6 +20,7 @@ type GenerateOptions = {
     }[];
     tools?: ToolAction[];
     maxTurns?: number;
+    config?: Record<string, unknown>;
 };
 
 type GenerateResponse = {
@@ -63,7 +65,7 @@ function specialistOutput(summary: string, evidenceIds: string[] = []): Generate
 function baseRunInput(ai: Genkit, overrides: Partial<Parameters<typeof ExecutiveOrchestrator.run>[0]> = {}) {
     return {
         ai,
-        userMessage: "Review my inbox and calendar before noon.",
+        userMessage: "Review my inbox and calendar before noon and draft follow-up suggestions.",
         chatHistory: [],
         emailTools: [
             tool("google_mail_search_common_filters"),
@@ -159,6 +161,13 @@ test("filterReadOnlyEmailTools excludes email sending tools for specialists", ()
     ]);
 });
 
+test("shouldRunDraftingAgent only routes requests that need draft text", () => {
+    assert.equal(shouldRunDraftingAgent("Just summarize my emails."), false);
+    assert.equal(shouldRunDraftingAgent("Review my inbox and write reply drafts for urgent messages."), true);
+    assert.equal(shouldRunDraftingAgent("Help me respond to Maya about the contract."), true);
+    assert.equal(shouldRunDraftingAgent("Which emails need follow up today?"), false);
+});
+
 test("ExecutiveOrchestrator.run routes specialists and aggregates the final response", async () => {
     const {ai, calls} = createMockAi([
         specialistOutput("Email triage found two urgent items.", ["email-1"]),
@@ -198,6 +207,38 @@ test("ExecutiveOrchestrator.run routes specialists and aggregates the final resp
     assert.match(finalPrompt, /Calendar planning found one conflict/);
     assert.match(finalPrompt, /Drafting prepared two review-only drafts/);
     assert.match(finalPrompt, /Collaboration trace/);
+
+    assert.equal(calls[0].config?.maxOutputTokens, 1400);
+    assert.equal(calls[2].config?.maxOutputTokens, 900);
+    assert.equal(calls[3].config?.maxOutputTokens, 1800);
+});
+
+test("ExecutiveOrchestrator.run skips drafting specialist for summary-only requests", async () => {
+    const {ai, calls} = createMockAi([
+        specialistOutput("Email triage summarized recent messages.", ["email-1"]),
+        {text: "Inbox summary only."},
+    ]);
+
+    const output = await ExecutiveOrchestrator.run(baseRunInput(ai, {
+        userMessage: "Just summarize my emails.",
+        calendarTools: [],
+        finalTools: [],
+        hasCalendarConnection: false,
+    }));
+
+    assert.equal(output.replyText, "Inbox summary only.");
+    assert.equal(calls.length, 2);
+    assert.deepEqual(output.trace.agentTrace.map((step) => step.agentId), [
+        "email_triage_agent",
+        "calendar_planning_agent",
+        "drafting_agent",
+    ]);
+    assert.deepEqual(output.trace.agentTrace.map((step) => step.status), [
+        AgentTraceStatus.Completed,
+        AgentTraceStatus.Skipped,
+        AgentTraceStatus.Skipped,
+    ]);
+    assert.equal(output.trace.agentTrace[2].outputSummary, "The request did not ask for reply drafts or follow-up message text.");
 });
 
 test("ExecutiveOrchestrator.run skips calendar specialist when no calendar connection is selected", async () => {

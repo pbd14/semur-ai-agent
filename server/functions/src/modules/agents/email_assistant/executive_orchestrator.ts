@@ -56,6 +56,7 @@ type SpecialistConfig = {
     inputSummary: string;
     tools: ToolAction[];
     priorReports?: Record<string, SpecialistReport | null>;
+    maxOutputTokens?: number;
 };
 
 type ExecutiveOrchestratorInput = {
@@ -200,6 +201,29 @@ function modelForMode(fastMode?: boolean, proMode?: boolean) {
     return GeminiModelsConfig.normalModel;
 }
 
+const DEFAULT_SPECIALIST_MAX_OUTPUT_TOKENS = 1400;
+const DRAFTING_SPECIALIST_MAX_OUTPUT_TOKENS = 900;
+const FINAL_RESPONSE_MAX_OUTPUT_TOKENS = 1800;
+
+const DRAFTING_INTENT_PATTERNS = [
+    /\b(draft|write|compose|prepare)\b.{0,80}\b(email|reply|response|message|follow[- ]?up)s?\b/i,
+    /\b(email|reply|response|message|follow[- ]?up)s?\b.{0,80}\b(draft|write|compose|prepare)\b/i,
+    /\b(reply|respond|email back|message back)\b/i,
+    /\bfollow[- ]?up (email|message|reply|draft|response)\b/i,
+    /\bsend\b.{0,80}\b(email|reply|message)\b/i,
+];
+
+export function shouldRunDraftingAgent(userMessage: string): boolean {
+    return DRAFTING_INTENT_PATTERNS.some((pattern) => pattern.test(userMessage));
+}
+
+function generationConfig(agentMood: AgentMood, maxOutputTokens: number): { [k: string]: unknown; } {
+    return {
+        ...GeminiModelsMoods.getMoodConfig(agentMood),
+        maxOutputTokens,
+    };
+}
+
 export class ExecutiveOrchestrator {
     static async run(input: ExecutiveOrchestratorInput): Promise<ExecutiveOrchestratorOutput> {
         const trace: AgentTraceStep[] = [];
@@ -231,18 +255,29 @@ export class ExecutiveOrchestrator {
             ));
         }
 
-        const draftingReport = await ExecutiveOrchestrator.runSpecialist(input, {
-            agentId: "drafting_agent",
-            displayName: "Drafting Agent",
-            reason: "Draft safe reply and follow-up recommendations from specialist reports.",
-            inputSummary: "Use email and calendar reports to prepare response drafts without sending anything.",
-            tools: [],
-            priorReports: {
-                emailReport,
-                calendarReport,
-            },
-            systemPrompt: DRAFTING_SYSTEM_PROMPT,
-        }, trace);
+        let draftingReport: SpecialistReport | null = null;
+        if (shouldRunDraftingAgent(input.userMessage)) {
+            draftingReport = await ExecutiveOrchestrator.runSpecialist(input, {
+                agentId: "drafting_agent",
+                displayName: "Drafting Agent",
+                reason: "Draft safe reply and follow-up recommendations from specialist reports.",
+                inputSummary: "Use email and calendar reports to prepare response drafts without sending anything.",
+                tools: [],
+                priorReports: {
+                    emailReport,
+                    calendarReport,
+                },
+                systemPrompt: DRAFTING_SYSTEM_PROMPT,
+                maxOutputTokens: DRAFTING_SPECIALIST_MAX_OUTPUT_TOKENS,
+            }, trace);
+        } else {
+            trace.push(createSkippedAgentTraceStep(
+                "drafting_agent",
+                "Drafting Agent",
+                "The request did not ask for reply drafts or follow-up message text.",
+                "Check whether the user's request needs draft content.",
+            ));
+        }
 
         const replyText = await ExecutiveOrchestrator.generateFinalResponse(input, {
             emailReport,
@@ -270,7 +305,10 @@ export class ExecutiveOrchestrator {
                 tools: config.tools,
                 maxTurns: config.tools.length > 0 ? 8 : 1,
                 context: input.context,
-                config: GeminiModelsMoods.getMoodConfig(input.agentMood),
+                config: generationConfig(
+                    input.agentMood,
+                    config.maxOutputTokens || DEFAULT_SPECIALIST_MAX_OUTPUT_TOKENS,
+                ),
                 output: {
                     schema: ZodSpecialistReport,
                 },
@@ -353,7 +391,7 @@ export class ExecutiveOrchestrator {
             tools: input.finalTools,
             maxTurns: input.finalTools.length > 0 ? 4 : 1,
             context: input.context,
-            config: GeminiModelsMoods.getMoodConfig(input.agentMood),
+            config: generationConfig(input.agentMood, FINAL_RESPONSE_MAX_OUTPUT_TOKENS),
         });
 
         if (!response.text || response.text.trim() === "") {
@@ -380,12 +418,15 @@ const DRAFTING_SYSTEM_PROMPT = [
     "You are drafting_agent, a specialist inside Semur's executive assistant workflow.",
     "You do not have tools and must not send email.",
     "Use the prior specialist reports to draft concise reply or follow-up recommendations that are safe for the user to review.",
+    "Return at most three drafts. Do not repeat sentences, headings, or draft bodies.",
 ].join("\n");
 
 const FINAL_ORCHESTRATOR_SYSTEM_PROMPT = [
     "You are Executive Orchestrator for Semur's executive email and calendar assistant.",
     "Combine specialist reports into one concise, professional answer for the user.",
     "If a specialist was skipped or failed, mention the limitation briefly and continue with the available context.",
+    "Do not mention a skipped Drafting Agent when the user did not ask for draft content.",
     "Do not claim that any email was sent. Drafts are suggestions for user review only.",
+    "Do not repeat sentences or section headings.",
     "Use Markdown for clear sections when helpful.",
 ].join("\n");
