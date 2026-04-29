@@ -1,9 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:semur/accessors/users/user_accessor.dart';
 import 'package:semur/config/application.dart';
-import 'package:semur/global/app_user.dart';
 import 'package:semur/services/firebase_analytics_service.dart';
 
 part 'auth_change_password_event.dart';
@@ -16,23 +14,6 @@ class AuthChangePasswordBloc
       if (event is AuthChangePasswordSendCode) {
         emit(AuthChangePasswordLoading());
         try {
-          // Check if user exists
-          int userCount = await Application.accessors.userAccessor.countQuery(
-            callerRole: AppUser.currentCallerRole,
-            queryKey: UserAccessorQueryKey.countByEmail,
-            arguments: {'email': event.email},
-          );
-
-          // User not found
-          if (userCount == 0) {
-            emit(
-              AuthChangePasswordError(
-                errorText: Application.appLocalizations!.userNotFound,
-              ),
-            );
-            return;
-          }
-
           // Check if email is correct
           if (FirebaseAuth.instance.currentUser != null) {
             if (FirebaseAuth.instance.currentUser!.email != event.email) {

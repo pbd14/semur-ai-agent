@@ -31,6 +31,19 @@ firebase functions:secrets:set NANGO_SECRET_KEY_DEV
 firebase functions:secrets:set GOOGLE_GENAI_API_KEY
 ```
 
+## Local Env Example
+
+[server/functions/.env.example](../server/functions/.env.example) is a placeholder-only reference for local development and emulator defaults. Keep values empty in the tracked file. For hosted Functions, use Firebase secrets instead of `.env` files.
+
+## Firestore Configuration
+
+Firestore rules and indexes are tracked at:
+
+- [server/firestore.rules](../server/firestore.rules)
+- [server/firestore.indexes.json](../server/firestore.indexes.json)
+
+The rules allow public read-only `app_data`, owner-only reads and writes under each user's document, owner-only Telegram integration records, restricted account-deletion archive creates, and deny all other client access. Firebase Admin SDK code in Functions bypasses these client rules.
+
 ## Flutter Firebase Config
 
 The Flutter web client uses the checked-in Firebase configuration at [client/semur/lib/firebase_options.dart](../client/semur/lib/firebase_options.dart).
@@ -61,3 +74,7 @@ To configure native targets, run `flutterfire configure` inside `client/semur` a
 ## Credential Safety
 
 Do not commit local OAuth client secrets, service account keys, `.env` files, or Firebase secret values. Keep only secret names and setup instructions in repository documentation.
+
+Before public submission, rotate any Google OAuth client secret, Nango secret, Google AI key, and Telegram bot token that may have been exposed during development. Repository scans can prove current files do not contain secret values; they cannot prove provider-side rotation.
+
+Live Gmail sending is confirmation-gated. The assistant prompt requires recipients, subject, and body to be shown to the user and a yes/no confirmation to be received before the Gmail send tool is used. The deterministic `/demo` and multi-agent drafting path produce review-only drafts.

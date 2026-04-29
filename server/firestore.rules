@@ -1,0 +1,55 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return signedIn() && request.auth.uid == userId;
+    }
+
+    function ownsExistingUserField() {
+      return signedIn() && resource.data.userId == request.auth.uid;
+    }
+
+    function ownsIncomingUserField() {
+      return signedIn() && request.resource.data.userId == request.auth.uid;
+    }
+
+    match /app_data/{document=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    match /users/{userId} {
+      allow read, delete: if isOwner(userId);
+      allow create, update: if isOwner(userId)
+        && request.resource.data.id == userId;
+
+      match /{document=**} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    match /external_app_telegram_bot/{integrationId} {
+      allow read, delete: if ownsExistingUserField();
+      allow create: if ownsIncomingUserField()
+        && request.resource.data.id == integrationId;
+      allow update: if ownsExistingUserField()
+        && ownsIncomingUserField()
+        && request.resource.data.id == integrationId;
+    }
+
+    match /deletedUsers/{deletedUserId} {
+      allow create: if signedIn()
+        && request.resource.data.id == request.auth.uid;
+      allow read, update, delete: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

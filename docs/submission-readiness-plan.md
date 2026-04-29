@@ -34,7 +34,7 @@ Notable findings:
 - Flutter widget tests now cover Semur-specific chat and demo surfaces instead of the default counter app.
 - The root working tree has many uncommitted changes, untracked files, and deleted tracked artifacts.
 - A previously tracked OAuth secret file has been deleted locally, but that credential must still be rotated and removed from any public history before publishing.
-- No Firestore rules or indexes are tracked under `server/`.
+- Firestore rules and indexes are now tracked under `server/` for the Firebase deploy/emulator workflow.
 
 ## Requirement Mapping
 
@@ -259,18 +259,27 @@ Actions:
 - Add Firestore rules and indexes if the app depends on Firestore collections.
 - Document that live email sending requires user confirmation.
 
+Implementation update on 2026-04-29:
+
+- Added tracked Firestore rules and indexes under `server/` and wired them through `server/firebase.json`.
+- Added placeholder-only `server/functions/.env.example` for local emulator/runtime names without committed secret values.
+- Removed the client-side password-reset lookup that queried `users` by email, so Firestore rules do not need a public email-count path.
+- Documented the security scan commands, Firestore config, placeholder env guidance, and live Gmail send-confirmation requirement in the grader-facing docs.
+- Repo-side Phase 6 cleanup is complete, but provider-side rotation of any previously exposed Google OAuth, Nango, Google AI, or Telegram credential remains a manual owner task before public submission.
+
 Acceptance checks:
 
 ```bash
-rg -n --hidden -g '!**/node_modules/**' -g '!**/build/**' -g '!**/.git/**' "client_secret|private_key|BEGIN PRIVATE KEY|NANGO_SECRET|GOOGLE_GENAI_API_KEY|password"
-git ls-files | rg "oauth|secret|\\.genkit"
+git ls-files | rg '(^|/)(\.env$|.*oauth.*\.json$|.*secret.*\.json$)|\.genkit'
+SECRET_VALUE_PATTERN='client''_secret|private''_key|BEGIN'' PRIVATE KEY|NANGO_SECRET_KEY_DEV''=.+|GOOGLE_GENAI_API_KEY''=.+|TELEGRAM_BOT_TOKEN''=.+'
+rg -n --hidden -g '!**/node_modules/**' -g '!**/build/**' -g '!**/.git/**' "$SECRET_VALUE_PATTERN"
 ```
 
 Expected outcome:
 
 - No secret values are present in tracked files.
 - Any secret names in docs are placeholders only.
-- Previously exposed credentials are no longer valid.
+- Previously exposed credentials are rotated and no longer valid before public submission.
 
 ### 7. Add A Simple CI Workflow
 

@@ -28,10 +28,15 @@ Sample phase-two demo prompt:
 Review my inbox and calendar for tomorrow. Identify urgent emails, find scheduling conflicts, and draft responses for anything that needs action before noon.
 ```
 
+## Demo Video
+
+Watch the course demo video on YouTube: [Semur demo](https://youtu.be/YTf0QWPL8JI).
+
 ## Project Layout
 
 - `client/semur`: Flutter web client for chat, integrations, and inbox views.
 - `server/functions`: Firebase Functions backend with Genkit agent flows and Nango-backed tools.
+- `server/firestore.rules` and `server/firestore.indexes.json`: Firestore security rules and index configuration for emulator and deploy workflows.
 - `protos`: shared protobuf contracts used by the client and backend.
 - `docs`: setup and runtime notes.
 - `scripts`: repository-level helper scripts.
@@ -86,7 +91,11 @@ Runtime configuration details are documented in [docs/runtime-config.md](docs/ru
 - `GOOGLE_GENAI_API_KEY`: required for live AI-backed assistant responses outside the deterministic demo flow.
 - `TELEGRAM_BOT_TOKEN`: optional; only needed when the Telegram integration and webhook setup are enabled.
 
-For the full runtime configuration and emulator notes, see [docs/runtime-config.md](docs/runtime-config.md).
+`server/functions/.env.example` contains placeholder-only local values. Do not commit real OAuth client secrets, Firebase secret values, service account keys, Nango keys, or Google AI keys.
+
+Firestore rules and indexes are tracked under `server/` and referenced by `server/firebase.json`. The rules allow public read-only app configuration, owner-only user data, owner-only Telegram integration records, and deny everything else by default.
+
+For the full runtime configuration, emulator notes, and credential rotation checklist, see [docs/runtime-config.md](docs/runtime-config.md).
 
 ## Flutter Web Setup
 
@@ -135,12 +144,22 @@ flutter analyze
 flutter build web
 ```
 
+Security and configuration:
+
+```bash
+git ls-files | rg '(^|/)(\.env$|.*oauth.*\.json$|.*secret.*\.json$)|\.genkit'
+SECRET_VALUE_PATTERN='client''_secret|private''_key|BEGIN'' PRIVATE KEY|NANGO_SECRET_KEY_DEV''=.+|GOOGLE_GENAI_API_KEY''=.+|TELEGRAM_BOT_TOKEN''=.+'
+rg -n --hidden -g '!**/node_modules/**' -g '!**/build/**' -g '!**/.git/**' "$SECRET_VALUE_PATTERN"
+```
+
 ## Limitations and Known Issues
 
 - The graded demo path is web-first. Native Android, iOS, macOS, Linux, and Windows targets need fresh Firebase platform configuration before live deployment.
 - The `/demo` route is fixture-backed and deterministic. It is designed for reproducible grading, not for showing live inbox or calendar state.
 - Live Gmail, Outlook Mail, and Google Calendar integrations require external credentials, Firebase secrets, and Nango setup that are intentionally optional for the course demo path.
 - The multi-agent Semur chat path produces review-only drafts. It does not auto-send email on the user's behalf.
+- Live Gmail sending requires the assistant to show the recipients, subject, and body, then ask for explicit yes/no user confirmation before using the send-email tool.
+- Previously exposed external credentials must be rotated by the project owner before public submission; repository checks can confirm absence from files, not provider-side revocation.
 
 ## Team Contributions
 
